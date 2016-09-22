@@ -11,16 +11,13 @@ span:hover {
 }
 .footer {
 	position: fixed;
-	bottom: 0;
+	top: 0;
 	left: 0;
-	right: 0;
-	margin: 20px;
 }
 .footer div {
-	margin: auto;
-	width: 760px;
+	padding: 20px;
 	font-size: 18px;
 	font-family: "Carlito";
 	color: #222;
-	background-color: #ccc;
+	background-color: rgba(255, 255, 255, 0.5);
 }
