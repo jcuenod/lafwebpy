@@ -1,4 +1,5 @@
 import sys, collections, re
+from morphological_lists import fancifier
 from bottle import route, run, template, static_file
 from laf.fabric import LafFabric
 from etcbc.preprocess import prepare
@@ -21,92 +22,12 @@ API=fabric.load(source+version, 'lexicon', 'workshop', {
 exec(fabric.localnames.format(var='fabric'))
 
 
-sp_list = {
-	"art": "Article",
-	"verb": "Verb",
-	"subs": "Noun",
-	"nmpr": "Proper noun",
-	"advb": "Adverb",
-	"prep": "Preposition",
-	"conj": "Conjunction",
-	"prps": "Pers. pronoun",
-	"prde": "Demons. pron.",
-	"prin": "Interr. pronoun",
-	"intj": "Interjection",
-	"nega": "Negative",
-	"inrg": "Interrogative",
-	"adjv": "Adjective"
-}
-nu_list = {
-	"sg": "Singular",
-	"du": "Dual",
-	"pl": "Plural",
-	"unknown": "Unknown",
-	"NA": "NA"
-}
-gn_list = {
-	"m": "Masculine",
-	"f": "Feminine",
-	"unknown": "Unknown",
-	"NA": "NA"
-}
-ps_list = {
-	"p1": "First",
-	"p2": "Second",
-	"p3": "Third",
-	"unknown": "Unknown",
-	"NA": "NA"
-}
-vt_list = {
-	"perf": "Perfect",
-	"impf": "Imperfect",
-	"wayq": "Wayyiqtol",
-	"impv": "Imperative",
-	"infa": "Infinitive (Absolute)",
-	"infc": "Infinitive (Construct)",
-	"ptca": "Participle",
-	"ptcp": "Participle (Passive)",
-	"NA": "NA"
-}
-vs_list = {
-	"afel": "Af‘el",
-	"etpa": "Etpa“al",
-	"etpe": "Etpe‘el",
-	"haf": "Haf‘el",
-	"hif": "Hif‘il",
-	"hit": "Hitpa“el",
-	"hof": "Hof‘al",
-	"hop": "Hotpa“al",
-	"hsht": "Hishtaf‘al",
-	"htpa": "Hitpa“al",
-	"htpe": "Hitpe‘el",
-	"nif": "Nif‘al",
-	"nit": "Nitpa“el",
-	"pael": "Pa“el",
-	"pasq": "Passiveqal",
-	"peal": "Pe‘al",
-	"peil": "Pe‘il",
-	"piel": "Pi“el",
-	"pual": "Pu“al",
-	"qal": "Qal",
-	"shaf": "Shaf‘el",
-	"tif": "Tif‘al",
-	"NA": "NA"
-}
-st_list = {
-	"a": "Absolute",
-	"c": "Construct",
-	"e": "Emphatic",
-	"NA": "NA"
-}
-
 def remove_na(list_to_reduce):
 	templist = list_to_reduce
 	keys_to_remove = set()
 	for key, value in templist.items():
 		if value == "NA":
 			keys_to_remove.add(key)
-	print(keys_to_remove)
 	for key in keys_to_remove:
 		del templist[key]
 	return templist
@@ -116,13 +37,13 @@ def remove_na(list_to_reduce):
 def api(node):
 	r = {
 		"Lexeme": F.g_lex_utf8.v(node),
-		"Part of Speech": sp_list[F.sp.v(node)],
-		"Person": ps_list[F.ps.v(node)],
-		"Number": nu_list[F.nu.v(node)],
-		"Gender": gn_list[F.gn.v(node)],
-		"Tense": vt_list[F.vt.v(node)], # vt = verbal tense
-		"Stem": vs_list[F.vs.v(node)], # vs = verbal stem
-		"State": st_list[F.st.v(node)], # construct/absolute/emphatic
+		"Part of Speech": fancifier("sp", F.sp.v(node)),
+		"Person": fancifier("ps", F.ps.v(node)),
+		"Number": fancifier("nu", F.nu.v(node)),
+		"Gender": fancifier("gn", F.gn.v(node)),
+		"Tense": fancifier("vt", F.vt.v(node)), # vt = verbal tense
+		"Stem": fancifier("vs", F.vs.v(node)), # vs = verbal stem
+		"State": fancifier("st", F.st.v(node)), # construct/absolute/emphatic
 		# "Suffix": F.g_prs_utf8.v(node),
 		"Gloss": F.gloss.v(node)
 	}
