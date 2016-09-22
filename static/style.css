@@ -3,9 +3,10 @@
 	margin: auto;
 	font-family: "SBL Biblit";
 	font-size: 32px;
+	text-align: right;
 }
 span:hover {
-	color: #05a;
+	color: #038;
 	cursor: pointer;
 }
 .footer {
