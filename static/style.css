@@ -10,7 +10,7 @@ body {
 	font-size: 32px;
 	text-align: right;
 }
-span:hover {
+.main span:hover {
 	color: #038;
 	cursor: pointer;
 }
@@ -47,15 +47,23 @@ span:hover {
 	height: 10vh;
 	min-width: 10vh;
 	font-size: 14px;
-	background-color: #8d8;
 	color: #fff;
 	text-align: center;
+	background: #8d8 url("/static/search.svg");
+	background-size: contain;
+	border-bottom-right-radius: 5px;
+	transition: all 500ms ease;
+}
+.doSearch:hover {
+	background: #5d5 url("/static/search.svg");
+	background-size: contain;
 }
 .termList {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: inline-block;
+	float: left;
 }
 .termList li {
 	display: inline-block;
@@ -65,6 +73,15 @@ span:hover {
 	background-color: #88d;
 	color: #fff;
 	text-align: center;
+	transition: all 500ms ease;
+	font-size: 28px;
+}
+.termList li:hover {
+	cursor: pointer;
+	height: 13vh;
+	background-color: #55d;
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
 }
 .termList li.hidden {
 	min-width: 0;
@@ -89,11 +106,18 @@ span:hover {
 	font-size: 18px;
 	border-spacing: 20px 15px;
 }
-.highlight_clause {
-	color: #a00;
+.results table td:nth-child(1) {
+	text-align: left;
+	font-size: 80%;
 }
-.hebrew {
+.results table td.hebrew {
 	text-align: right;
 	font-family: "Ezra SIL";
 	font-size: 130%;
+}
+.results table td:nth-child(3) {
+	text-align: left;
+}
+.highlight_clause {
+	color: #a00;
 }

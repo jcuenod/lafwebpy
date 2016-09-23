@@ -146,15 +146,25 @@ $(document).ready(function(){
 		$that.remove();
 	}, 1000);
 }).on("click", ".doSearch", function(){
-	$.ajax({
-		method: "POST",
-		url: "/api/search",
-		data: JSON.stringify({"query": searchTerms})
-	})
-	.done(function( msg ) {
-		$result_div = $("<div>").addClass("results");
-		$result_div.append(searchResultsToTable(msg)).appendTo("body");
-	});
+	if (searchTerms.length === 0)
+	{
+		alert("You need search terms before you can search smarty pants...");
+	}
+	else
+	{
+		$.ajax({
+			method: "POST",
+			url: "/api/search",
+			data: JSON.stringify({"query": searchTerms})
+		})
+		.done(function( msg ) {
+			$result_div = $("<div>").addClass("results").css({"opacity": 0});
+			$result_div.append(searchResultsToTable(msg)).appendTo("body");
+			$result_div.animate({"opacity": 1});
+		});
+	}
 }).on("click", ".results", function(){
-	$(this).remove();
+	$(this).animate({"opacity": 0}, function(){
+		$(this).remove();
+	});
 });

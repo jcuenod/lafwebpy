@@ -11,7 +11,7 @@
 	<section class="searchBuilder"><!--
 	 --><ul class="termList">
 		</ul><!--
-	 --><a href="#" class="doSearch">mag</a>
+	 --><a href="#" class="doSearch" title="search"></a>
 	</section>
 	<section class="main">
 		{{!content}}
