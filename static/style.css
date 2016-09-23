@@ -1,6 +1,11 @@
+body {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
 .main {
 	width: 760px;
-	margin: auto;
+	margin: 16vh auto 26vh auto;
 	font-family: "SBL Biblit";
 	font-size: 32px;
 	text-align: right;
@@ -11,13 +16,84 @@ span:hover {
 }
 .footer {
 	position: fixed;
-	top: 0;
+	top: 14vh;
 	left: 0;
 }
 .footer div {
-	padding: 20px;
-	font-size: 18px;
+	padding: 2vh;
+	font-size: 14px;
 	font-family: "Carlito";
 	color: #222;
 	background-color: rgba(255, 255, 255, 0.5);
+}
+.properties tr:hover {
+	background-color: #dfd;
+	cursor: pointer;
+}
+.properties tr.selected {
+	background-color: #fdd;
+}
+.properties tr.selected:hover {
+	background-color: #dfb;
+}
+
+.searchBuilder {
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+.doSearch {
+	display: inline-block;
+	height: 10vh;
+	min-width: 10vh;
+	font-size: 14px;
+	background-color: #8d8;
+	color: #fff;
+	text-align: center;
+}
+.termList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+}
+.termList li {
+	display: inline-block;
+	height: 10vh;
+	min-width: 10vh;
+	font-size: 14px;
+	background-color: #88d;
+	color: #fff;
+	text-align: center;
+}
+.termList li.hidden {
+	min-width: 0;
+	width: 0;
+	transition: all 500ms ease;
+}
+.results {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255, 255, 255, 0.9);
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	position: fixed;
+}
+
+
+.results table {
+	font-size: 18px;
+	border-spacing: 20px 15px;
+}
+.highlight_clause {
+	color: #a00;
+}
+.hebrew {
+	text-align: right;
+	font-family: "Ezra SIL";
+	font-size: 130%;
 }
