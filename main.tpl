@@ -13,8 +13,13 @@
 		</ul><!--
 	 --><a href="#" class="doSearch" title="search"></a>
 	</section>
+	<nav class="ref_selector">
+		<div class="chapter" data-url="{{content["prev_chapter"]}}">«</div>
+		<div class="main_ref">{{content["reference"]}}</div>
+		<div class="chapter" data-url="{{content["next_chapter"]}}">»</div>
+	</nav>
 	<section class="main">
-		{{!content}}
+		{{!content["chapter_text"]}}
 	</section>
 	<section class="footer">
 		<div></div>

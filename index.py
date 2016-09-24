@@ -1,6 +1,6 @@
 import sqlite3, sys, collections, re, xml.etree.ElementTree, json
 from io import TextIOWrapper
-from morphological_lists import book_index
+from morphological_lists import book_index, generous_name
 from bottle import route, post, request, response, run, template, static_file
 from laf.fabric import LafFabric
 from etcbc.preprocess import prepare
@@ -66,11 +66,19 @@ def static(filename):
 
 @route('/<book>/<chapter>')
 def index(book, chapter):
+	book = generous_name(book)
 	for n in NN():
 		if F.otype.v(n) == 'chapter' and F.chapter.v(n) == chapter and F.book.v(n) == book:
 			book_chapter_node = n
 	to_p = ''.join('<span data-node="{}">{}</span>{}'.format(w, F.g_word_utf8.v(w), F.trailer_utf8.v(w)) for w in L.d("word", book_chapter_node))
-	return template('main', content=to_p)
+
+	c = {
+		"reference": book + " " + str(chapter),
+		"chapter_text": to_p,
+		"prev_chapter": "/" + book + "/" + str(int(chapter) - 1),
+		"next_chapter": "/" + book + "/" + str(int(chapter) + 1)
+	}
+	return template('main', content=c)
 
 
 functions = {
@@ -122,6 +130,9 @@ def search():
 		clause_words = L.d('word', r)
 		clause_text = T.words(clause_words, fmt='ha').replace('\n','')
 		passage = T.passage(r)
+		print(r)
+		print(clause_text)
+		print(passage)
 
 		verse_node = L.u('verse', r)
 		verse_words = L.d('word', verse_node)

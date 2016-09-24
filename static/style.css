@@ -53,6 +53,7 @@ body {
 	background-size: contain;
 	border-bottom-right-radius: 5px;
 	transition: all 500ms ease;
+	cursor: pointer;
 }
 .doSearch:hover {
 	background: #5d5 url("/static/search.svg");
@@ -120,4 +121,89 @@ body {
 }
 .highlight_clause {
 	color: #a00;
+}
+
+
+.ref_selector {
+	display: block;
+	position: absolute;
+	top: 3vh;
+	right: 2vw;
+	height: 6vh;
+	font-size: 22px;
+	font-family: Carlito;
+}
+.ref_selector div {
+	display: block;
+	float: left;
+	background: #8d8;
+	line-height: 40px;
+	color: #fff;
+	cursor: pointer;
+	text-align: center;
+	padding: 0 15px;
+}
+.ref_selector div:hover {
+	transition: all 500ms ease;
+	background: #5d5;
+}
+.ref_selector div:first-child,
+.ref_selector div:last-child {
+	padding: 0;
+	width: 40px;
+	height: 40px;
+}
+.ref_selector div:last-child {
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+.ref_selector div:first-child {
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+
+.modal_container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255, 255, 255, 0.7);
+	text-align: center;
+	margin: 0;
+	padding: 5%;
+}
+.book_link {
+	display: inline-block;
+	margin: 10px;
+	width: 16%;
+	font-size: 22px;
+	text-align: center;
+	background: rgba(136,136,221,0.9);
+	height: 40px;
+	line-height: 40px;
+	text-decoration: none;
+	color: #fff;
+	border-radius: 3px;
+	border-bottom: 2px solid #5D5DA2;
+}
+.chapter_link {
+	display: inline-block;
+	margin: 10px;
+	width: 50px;
+	font-size: 32px;
+	text-align: center;
+	background: rgba(136,136,221,0.9);
+	height: 50px;
+	line-height: 50px;
+	text-decoration: none;
+	color: #fff;
+	border-radius: 3px;
+	border-bottom: 2px solid #5D5DA2;
+}
+.chapter_link:hover,
+.book_link:hover {
+	background-color: #55d;
+	border-bottom: 2px solid #2D2DC2;
 }
