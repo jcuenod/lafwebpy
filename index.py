@@ -135,11 +135,14 @@ def search():
 		print(passage)
 
 		verse_node = L.u('verse', r)
-		verse_words = L.d('word', verse_node)
-		heb_verse_text = T.words(verse_words, fmt='ha').replace('\n','')
-
-		passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", passage)[0]
-		p_text = get_p_text(passage_tuple)
+		if verse_node is not None:
+			verse_words = L.d('word', verse_node)
+			heb_verse_text = T.words(verse_words, fmt='ha').replace('\n','')
+			passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", passage)[0]
+			p_text = get_p_text(passage_tuple)
+		else:
+			heb_verse_text = ""
+			p_text = ""
 
 		retval.append({
 			"passage": passage,
