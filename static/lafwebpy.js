@@ -211,7 +211,7 @@ $(document).ready(function(){
 }).on("click", ".properties tr", function(){
 	$(this).toggleClass("selected");
 }).on("click", ".addTerm", function(){
-	var $li = $("<li>");
+	var $li = $("<li>").addClass("hidden");
 	var li_data = {};
 	$(".selected").each(function(){
 		li_data[$(this).data("key")] = $(this).data("value");
@@ -221,6 +221,7 @@ $(document).ready(function(){
 	searchTerms.push(li_data);
 
 	$(".termList").append($li);
+	$li.removeClass("hidden");
 	return false;
 }).on("click", ".termList li", function(){
 	searchTerms.splice($(this).index(), 1);
@@ -236,10 +237,15 @@ $(document).ready(function(){
 	}
 	else
 	{
+		searchType = $(".search_type_combo").val();
+		dataToSend = {
+			"query": searchTerms,
+			"search_type": searchType
+		};
 		$.ajax({
 			method: "POST",
 			url: "/api/search",
-			data: JSON.stringify({"query": searchTerms})
+			data: JSON.stringify(dataToSend)
 		})
 		.done(function( msg ) {
 			$result_div = $("<div>").addClass("results").css({"opacity": 0}).text(msg.length + " results");

@@ -27,7 +27,7 @@ db = sqlite3.connect("parallel_texts.sqlite")
 query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
 
 def remove_tags(text):
-	return ''.join(xml.etree.ElementTree.fromstring(text).itertext())
+	return ' '.join(xml.etree.ElementTree.fromstring(text).itertext())
 
 def remove_na(list_to_reduce):
 	templist = list_to_reduce
@@ -111,7 +111,12 @@ def get_p_text(passage):
 
 @post('/api/search')
 def search():
-	query = json.load(TextIOWrapper(request.body))["query"]
+	json_response = json.load(TextIOWrapper(request.body))
+	query = json_response["query"]
+	search_types = ["clause", "sentence", "paragraph", "verse", "phrase"]
+	search_type = json_response["search_type"]
+	if search_type not in search_types:
+		search_type = "clause"
 	arr = [[] for i in range(len(query))]
 	for n in NN():
 		if F.otype.v(n) == 'word':
@@ -119,7 +124,7 @@ def search():
 			word_added = False
 			for q in query:
 				if not word_added and test_node_with_query(q, n):
-					arr[q_index].append(L.u('clause', n))
+					arr[q_index].append(L.u(search_type, n))
 					break
 				q_index += 1
 
@@ -134,15 +139,22 @@ def search():
 		print(clause_text)
 		print(passage)
 
-		verse_node = L.u('verse', r)
+		# We'll traverse more carefully in the future, this is just temporary
+		verse_node = r
+		if F.otype.v(verse_node) != 'verse':
+			verse_node = L.u('verse', r)
+
 		if verse_node is not None:
 			verse_words = L.d('word', verse_node)
 			heb_verse_text = T.words(verse_words, fmt='ha').replace('\n','')
 			passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", passage)[0]
 			p_text = get_p_text(passage_tuple)
 		else:
-			heb_verse_text = ""
+			heb_verse_text = clause_text
 			p_text = ""
+
+		if verse_node == r:
+			clause_text = ""
 
 		retval.append({
 			"passage": passage,
