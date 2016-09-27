@@ -76,6 +76,7 @@ body {
 	text-align: center;
 	transition: all 500ms ease;
 	font-size: 28px;
+	transition: all 500ms ease;
 }
 .termList li:hover {
 	cursor: pointer;
@@ -87,7 +88,6 @@ body {
 .termList li.hidden {
 	min-width: 0;
 	width: 0;
-	transition: all 500ms ease;
 }
 .results {
 	top: 0;
@@ -206,4 +206,55 @@ body {
 .book_link:hover {
 	background-color: #55d;
 	border-bottom: 2px solid #2D2DC2;
+}
+
+
+.search_type_combo {
+	float: right;
+	position: relative;
+	background: #8d8;
+	color: #fff;
+	cursor: pointer;
+	text-align: center;
+	height: 7vh;
+	line-height: 4vh;
+	margin: 1.5vh 1vw;
+	font-size: 14px;
+	font-family: Carlito;
+}
+.search_type_combo:hover {
+	background: #7c7;
+}
+.search_type_combo .selected_search_type{
+	padding: 1.5vh 1.7vw;
+	border-radius: 3px;
+}
+.search_type_combo .options {
+	display: block;
+	width: 100%;
+	position: absolute;
+	top: 8vh;
+	opacity: 0;
+	pointer-events: none;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	background: #8f8;
+	transition: opacity 400ms ease;
+	transition: top 250ms ease;
+}
+.search_type_combo:hover .options {
+	opacity: 1;
+	top: 7vh;
+	pointer-events: all;
+}
+.search_type_combo .options a {
+	display: block;
+	width: 100%;
+	color: #fff;
+	position: relative;
+	padding: 3px 0;
+	text-decoration: none;
+}
+.search_type_combo .options a:hover {
+	background: #8d8;
 }

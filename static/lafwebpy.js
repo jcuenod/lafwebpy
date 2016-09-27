@@ -202,6 +202,7 @@ function searchResultsToTable(results) {
 }
 
 var searchTerms = [];
+var searchType = "clause";
 $(document).ready(function(){
 }).on("click", "span", function(){
 	$.get("/api/word_data/" + $(this).data("node"), function(data){
@@ -237,7 +238,6 @@ $(document).ready(function(){
 	}
 	else
 	{
-		searchType = $(".search_type_combo").val();
 		dataToSend = {
 			"query": searchTerms,
 			"search_type": searchType
@@ -257,6 +257,9 @@ $(document).ready(function(){
 	$(this).animate({"opacity": 0}, function(){
 		$(this).remove();
 	});
+}).on("click", ".search_type_combo .options a", function(){
+	searchType = $(this).text();
+	$(".search_type_combo .selected_search_type").text(searchType);
 }).on("click", "nav .main_ref", function(){
 	var $div = $("<div>").addClass("modal_container");
 	ot_books.forEach(function(bk){
