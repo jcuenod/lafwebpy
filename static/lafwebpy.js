@@ -255,7 +255,13 @@ $(document).ready(function(){
 			$result_div = $("<div>").addClass("results").css({"opacity": 0}).text(msg.length + " results");
 			$result_div.append(searchResultsToTable(msg)).appendTo("body");
 			$result_div.animate({"opacity": 1});
+			$(".doSearch").removeClass("busy");
+		})
+		.fail(function(msg){
+			alert("Hmm, something went wrong with that search. Sorry about that... Try refreshing the page.");
+			$(".doSearch").removeClass("busy");
 		});
+		$(".doSearch").addClass("busy");
 	}
 }).on("click", ".results, .modal_container", function(){
 	$(this).animate({"opacity": 0}, function(){

@@ -61,6 +61,11 @@ body {
 	background: #5d5 url("/static/search.svg");
 	background-size: contain;
 }
+.doSearch.busy:hover,
+.doSearch.busy {
+	background: #8d8 url("/static/ripple.svg");
+	background-size: contain;
+}
 .termList {
 	list-style: none;
 	margin: 0;
