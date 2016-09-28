@@ -212,17 +212,21 @@ $(document).ready(function(){
 }).on("click", ".properties tr", function(){
 	$(this).toggleClass("selected");
 }).on("click", ".addTerm", function(){
-	var $li = $("<li>").addClass("hidden");
+	var $li = $("<li>");
 	var li_data = {};
 	$(".selected").each(function(){
 		li_data[$(this).data("key")] = $(this).data("value");
 		$li.append($("<span>").append($(this).data("value")));
 		$(this).removeClass("selected");
 	});
+	if (Object.keys(li_data).length === 0)
+	{
+		alert("You can't add an empty search term. Click on a morphological attribute to define a search term.");
+		return false;
+	}
 	searchTerms.push(li_data);
 
 	$(".termList").append($li);
-	$li.removeClass("hidden");
 	return false;
 }).on("click", ".termList li", function(){
 	searchTerms.splice($(this).index(), 1);
