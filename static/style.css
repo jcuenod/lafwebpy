@@ -39,6 +39,8 @@ body {
 
 .searchBuilder {
 	position: fixed;
+	/* need to have this above the morph data */
+	z-index: 1;
 	top: 0;
 	left: 0;
 }
