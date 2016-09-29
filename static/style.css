@@ -44,6 +44,13 @@ body {
 	top: 0;
 	left: 0;
 }
+.doSearch:after {
+	background: url("/static/ripple.svg");
+	display: none;
+	width: 1px;
+	height: 1px;
+	content: "";
+}
 .doSearch {
 	display: inline-block;
 	height: 10vh;
@@ -52,19 +59,22 @@ body {
 	color: #fff;
 	text-align: center;
 	background: #8d8 url("/static/search.svg");
-	background-size: contain;
+    background-size: contain;
+    background-position: center;
 	border-bottom-right-radius: 5px;
 	transition: all 500ms ease;
 	cursor: pointer;
 }
 .doSearch:hover {
-	background: #5d5 url("/static/search.svg");
+	background: #5d5 url("/static/search.svg") no-repeat;
 	background-size: contain;
+	background-position: center;
 }
 .doSearch.busy:hover,
 .doSearch.busy {
-	background: #8d8 url("/static/ripple.svg");
-	background-size: contain;
+	background: #8d8 url("/static/ripple.svg") no-repeat;
+	background-size: 82%;
+	background-position: center;
 }
 .termList {
 	list-style: none;
