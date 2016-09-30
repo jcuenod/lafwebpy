@@ -1,7 +1,7 @@
 import sqlite3, sys, collections, re, xml.etree.ElementTree, json
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name
-from bottle import route, post, request, response, run, template, static_file
+from bottle import route, post, request, response, redirect, run, template, static_file
 from laf.fabric import LafFabric
 from etcbc.preprocess import prepare
 
@@ -164,6 +164,12 @@ def search():
 		})
 	response.content_type = 'application/json'
 	return json.dumps(retval)
+
+
+@route('/')
+def root_page():
+	redirect('/Genesis/1')
+
 
 # run(host='localhost', port=8080)
 run(host='0.0.0.0', port=8080, debug=True)
