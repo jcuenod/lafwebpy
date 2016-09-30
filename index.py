@@ -80,6 +80,11 @@ def index(book, chapter):
 	}
 	return template('main', content=c)
 
+def key_from_passage(a):
+	passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", a["passage"])[0]
+	bindex = book_index(passage_tuple[0])
+	r = bindex * 1000000 + int(passage_tuple[1]) * 1000 + int(passage_tuple[2])
+	return r
 
 functions = {
 	"sp": lambda node : F.sp.v(node),
@@ -163,7 +168,9 @@ def search():
 			"english": p_text
 		})
 	response.content_type = 'application/json'
-	return json.dumps(retval)
+	# retval_sorted = sorted(retval, tcmp)
+	retval_sorted = sorted(retval, key=lambda x: key_from_passage(x))
+	return json.dumps(retval_sorted)
 
 
 @route('/')
