@@ -204,7 +204,7 @@ function searchResultsToTable(results) {
 var searchTerms = [];
 var searchType = "clause";
 $(document).ready(function(){
-}).on("click", "span", function(){
+}).on("click", ".main span", function(){
 	$.get("/api/word_data/" + $(this).data("node"), function(data){
 		$(".footer div").html(objToTable(data));
 		$(".footer div").append($("<a class='addTerm' href='#'>").text("add search term"));
