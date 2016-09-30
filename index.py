@@ -117,6 +117,7 @@ def get_p_text(passage):
 @post('/api/search')
 def search():
 	json_response = json.load(TextIOWrapper(request.body))
+	print(json_response)
 	query = json_response["query"]
 	search_types = ["clause", "sentence", "paragraph", "verse", "phrase"]
 	search_type = json_response["search_type"]
@@ -140,9 +141,6 @@ def search():
 		clause_words = L.d('word', r)
 		clause_text = T.words(clause_words, fmt='ha').replace('\n','')
 		passage = T.passage(r)
-		print(r)
-		print(clause_text)
-		print(passage)
 
 		# We'll traverse more carefully in the future, this is just temporary
 		verse_node = r
