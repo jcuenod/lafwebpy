@@ -229,10 +229,10 @@ $(document).ready(function(){
 	$(".termList").append($li);
 	return false;
 }).on("click", ".termList li", function(){
-	searchTerms.splice($(this).index(), 1);
 	$(this).addClass("hidden");
 	var $that = $(this);
 	setTimeout(function(){
+		searchTerms.splice($that.index(), 1);
 		$that.remove();
 	}, 1000);
 }).on("click", ".doSearch", function(){
