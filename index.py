@@ -70,15 +70,20 @@ def index(book, chapter):
 	for n in NN():
 		if F.otype.v(n) == 'chapter' and F.chapter.v(n) == chapter and F.book.v(n) == book:
 			book_chapter_node = n
-	to_p = ''.join('<span data-node="{}">{}</span>{}'.format(w, F.g_word_utf8.v(w), F.trailer_utf8.v(w)) for w in L.d("word", book_chapter_node))
+	# to_p = ''.join('<span data-node="{}">{}</span>{}'.format(w, F.g_word_utf8.v(w), F.trailer_utf8.v(w)) for w in L.d("word", book_chapter_node))
+	ret = []
+	for w in L.d("word", book_chapter_node):
+		ret.append({ "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
 
-	c = {
-		"reference": book + " " + str(chapter),
-		"chapter_text": to_p,
-		"prev_chapter": "/" + book + "/" + str(int(chapter) - 1),
-		"next_chapter": "/" + book + "/" + str(int(chapter) + 1)
-	}
-	return template('main', content=c)
+	# c = {
+	# 	"reference": book + " " + str(chapter),
+	# 	"chapter_text": to_p,
+	# 	"prev_chapter": "/" + book + "/" + str(int(chapter) - 1),
+	# 	"next_chapter": "/" + book + "/" + str(int(chapter) + 1)
+	# }
+	# return template('main', content=c)
+	response.content_type = 'application/json'
+	return json.dumps(ret)
 
 def key_from_passage(a):
 	passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", a["passage"])[0]
@@ -111,7 +116,11 @@ def get_p_text(passage):
 	vs = int(passage[2])
 	new_query=query.format(bk=bk,ch=ch,vs=vs)
 	cursor.execute(new_query)
-	translated_verse = cursor.fetchone()[0]
+	query_success = cursor.fetchone()
+	if query_success:
+		translated_verse = query_success[0]
+	else:
+		return ""
 	return remove_tags(translated_verse)
 
 @post('/api/search')
@@ -173,7 +182,7 @@ def search():
 
 @route('/')
 def root_page():
-	redirect('/Genesis/1')
+	return static_file("/index.html", root='static')
 
 
 # run(host='localhost', port=8080)
