@@ -44,8 +44,6 @@ var BibleText = React.createClass({
 		var words = this.props.data.reduce(function(previousValue, currentValue, i) {
 			// intersperse words with verse references
 			var toReturn = previousValue;
-			console.log(lastVerse);
-			console.log(currentValue);
 			if (currentValue.verse !== lastVerse)
 			{
 				// the last element should be empty
