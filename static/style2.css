@@ -12,14 +12,16 @@ body:after {
 }
 .bible_text_container {
 	position: absolute;
-	left: calc(50% + (1100px/2 - 845px));
 	top: 0;
-	right: 0;
+	left: 0;
 	bottom: 0;
+	right: 0;
 	overflow: auto;
-	padding: 0 15px;
 }
 .bible_text {
+	position: absolute;
+	top: 0;
+	left: calc(50% + (1100px/2 - 825px));
 	width: 830px;
 	padding: 15vh 3vw;
 	background-color: #fffffa;
@@ -31,14 +33,14 @@ body:after {
 	direction: rtl;
 }
 .bible_text.is_loading:after {
-	position: absolute;
+	position: fixed;
 	top: 0;
-	left: 0;
+	left: calc(50% + (1100px/2 - 830px));
 	bottom: 0;
-	right: 0;
+	width: 830px;
 	background: rgba(255, 255, 255, 0.5) url("/static/ripple.svg") no-repeat;
 	background-size: 50%;
-	background-position: center 8vh;
+	background-position: center;
 	content: "";
 }
 .whole_word {
