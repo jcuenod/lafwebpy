@@ -6,6 +6,6 @@ To run, you need `laf-fabric` and `bottle`. You also need [laf-fabric-data](http
 
   python3 index.py
 
-and visit `localhost:8080/Ruth/1` in your favourite browser.
+and visit `localhost:8080/` in your favourite browser.
 
 **NB: Make sure you have 4-6GB of RAM free before doing this or your machine may lock up...**
