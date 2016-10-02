@@ -55,6 +55,13 @@ body:after {
 .word_trailer {
 	white-space: pre;
 }
+.verse_number {
+	color: #d44949;
+	font-size: 40%;
+	display: inline-block;
+	vertical-align: top;
+	padding: 2px;
+}
 
 .search_builder {
 	position: fixed;

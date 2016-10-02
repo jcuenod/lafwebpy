@@ -19,9 +19,14 @@ var WordBit = React.createClass({
 var WholeWord = React.createClass({
 	render: function() {
 		var wordBitElements = this.props.word_bits.map(function(bit, i) {
-			return (
-				<WordBit key={i} wordbit={bit} updateSelectedWordBit={this.props.updateSelectedWordBit} />
-			);
+			if (bit.wid === "verse")
+			{
+				return <span key={i} className="verse_number">{bit.verse}</span>;
+			}
+			else
+			{
+				return <WordBit key={i} wordbit={bit} updateSelectedWordBit={this.props.updateSelectedWordBit} />;
+			}
 		}, this);
 		return (
 			<span className="whole_word">
@@ -35,8 +40,19 @@ var BibleText = React.createClass({
 		this.props.updateSelectedWordBit(wid)
 	},
 	render: function() {
+		var lastVerse = 0;
 		var words = this.props.data.reduce(function(previousValue, currentValue, i) {
+			// intersperse words with verse references
 			var toReturn = previousValue;
+			console.log(lastVerse);
+			console.log(currentValue);
+			if (currentValue.verse !== lastVerse)
+			{
+				// the last element should be empty
+				toReturn[toReturn.length-1].push({"wid": "verse", "verse": currentValue.verse});
+				lastVerse = currentValue.verse;
+			}
+
 			toReturn[toReturn.length-1].push(currentValue);
 			if (currentValue.trailer.includes(" ") || currentValue.trailer.includes("\n"))
 			{
@@ -44,10 +60,8 @@ var BibleText = React.createClass({
 			}
 			return toReturn;
 		}, [[]]).filter(function(el){return el.length > 0});
-		var wordElements = words.map(function(bit, i) {
-			return (
-				<WholeWord key={i} word_bits={bit} updateSelectedWordBit={this.handleWordBitSelected} />
-			);
+		var wordElements = words.map(function(word, i) {
+			return <WholeWord key={i} word_bits={word} updateSelectedWordBit={this.handleWordBitSelected} />;
 		}, this);
 		return (
 			<div className={this.props.isLoading ? "bible_text is_loading" : "bible_text"}>

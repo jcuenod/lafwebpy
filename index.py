@@ -70,10 +70,11 @@ def index(book, chapter):
 	for n in NN():
 		if F.otype.v(n) == 'chapter' and F.chapter.v(n) == chapter and F.book.v(n) == book:
 			book_chapter_node = n
+			break
 	# to_p = ''.join('<span data-node="{}">{}</span>{}'.format(w, F.g_word_utf8.v(w), F.trailer_utf8.v(w)) for w in L.d("word", book_chapter_node))
 	ret = []
 	for w in L.d("word", book_chapter_node):
-		ret.append({ "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
+		ret.append({ "verse": F.verse.v(L.u("verse", w)), "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
 
 	# c = {
 	# 	"reference": book + " " + str(chapter),
