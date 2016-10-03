@@ -1,7 +1,7 @@
 import sqlite3, sys, collections, re, xml.etree.ElementTree, json
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name
-from bottle import route, post, request, response, redirect, run, template, static_file
+from bottle import route, get, post, request, response, redirect, run, template, static_file
 from laf.fabric import LafFabric
 from etcbc.preprocess import prepare
 
@@ -64,7 +64,7 @@ def static(filename):
 	return static_file(filename, root='static')
 
 
-@route('/<book>/<chapter>')
+@post('/<book>/<chapter>')
 def index(book, chapter):
 	book = generous_name(book)
 	for n in NN():
@@ -180,9 +180,10 @@ def search():
 	retval_sorted = sorted(retval, key=lambda x: key_from_passage(x))
 	return json.dumps(retval_sorted)
 
-
+@get('/<book>')
+@get('/<book>/<chapter>')
 @route('/')
-def root_page():
+def root_page(book="Genesis", chapter="1"):
 	return static_file("/index.html", root='static')
 
 

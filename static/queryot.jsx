@@ -381,9 +381,17 @@ var TabulatedResults = React.createClass({
 
 var App = React.createClass({
 	getInitialState: function() {
-		var ref = { "book": "Genesis", "chapter": 1 };
+		var ref = "/Genesis/1";
 		if (localStorage.getItem('reference'))
-			ref = JSON.parse(localStorage.getItem('reference'));
+			ref = localStorage.getItem('reference');
+		if (location.pathname.replace("/", "").length > 0)
+			ref = location.pathname;
+		var ref_array = ref.replace(/^\//, "").split("/");
+		var ref_obj = {
+			"book": ref_array[0],
+			"chapter": Number.isInteger(+ref_array[1]) ? +ref_array[1] : 1
+		};
+
 		return {
 			"maindata": [],
 			"isLoading": false,
@@ -399,7 +407,7 @@ var App = React.createClass({
 			"chapterSelectionMode": false,
 			"bookNames": this.getOTBooksDetails().map(function(x) {return x.name;}),
 			"bookSelection": "Genesis",
-			"reference": ref
+			"reference": ref_obj
 		};
 	},
 	getOTBooksDetails: function() {
@@ -455,11 +463,11 @@ var App = React.createClass({
 			return;
 		var source_url = "/" + nextState.reference.book + "/" + nextState.reference.chapter;
 		this.loadChapter(source_url);
-		localStorage.setItem("reference", JSON.stringify(nextState.reference));
 	},
 	loadChapter: function(source_url) {
+		localStorage.setItem("reference", source_url);
 		this.setState({"isLoading": true});
-		this.serverRequest = $.get(source_url, function (result) {
+		this.serverRequest = $.post(source_url, function (result) {
 			this.setState({"maindata": result});
 			this.setState({"isLoading": false});
 		}.bind(this));
