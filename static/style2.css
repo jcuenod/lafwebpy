@@ -59,10 +59,11 @@ body:after {
 }
 .verse_number {
 	color: #d44949;
-	font-size: 40%;
+	font-size: 35%;
 	display: inline-block;
 	vertical-align: top;
 	padding: 2px;
+	font-weight: bold;
 }
 
 .search_builder {
