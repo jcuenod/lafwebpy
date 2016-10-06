@@ -93,21 +93,21 @@ def key_from_passage(a):
 	return r
 
 functions = {
-	"sp": lambda node : F.sp.v(node),
-	"nu": lambda node : F.nu.v(node),
-	"gn": lambda node : F.gn.v(node),
-	"ps": lambda node : F.ps.v(node),
-	"vt": lambda node : F.vt.v(node),
-	"vs": lambda node : F.vs.v(node),
-	"st": lambda node : F.st.v(node),
-	"lex_utf8": lambda node : F.lex_utf8.v(node),
-	"lex": lambda node : F.lex_utf8.v(node),
-	"root": lambda node : F.g_lex_utf8.v(node)
+	"sp": lambda node, value : F.sp.v(node) == value,
+	"nu": lambda node, value : F.nu.v(node) == value,
+	"gn": lambda node, value : F.gn.v(node) == value,
+	"ps": lambda node, value : F.ps.v(node) == value,
+	"vt": lambda node, value : F.vt.v(node) == value,
+	"vs": lambda node, value : F.vs.v(node) == value,
+	"st": lambda node, value : F.st.v(node) == value,
+	"lex_utf8": lambda node, value : F.lex_utf8.v(node).replace('=','') == value.replace('=', ''),
+	"lex": lambda node, value : F.lex_utf8.v(node) == value,
+	"root": lambda node, value : F.g_lex_utf8.v(node) == value
 }
 def test_node_with_query(query, node):
 	ret = True
 	for key in query:
-		ret &= functions[key](node) == query[key]
+		ret &= functions[key](node, query[key])
 	return ret
 
 def get_p_text(passage):
