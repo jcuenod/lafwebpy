@@ -100,9 +100,9 @@ functions = {
 	"vt": lambda node, value : F.vt.v(node) == value,
 	"vs": lambda node, value : F.vs.v(node) == value,
 	"st": lambda node, value : F.st.v(node) == value,
-	"lex_utf8": lambda node, value : F.lex_utf8.v(node).replace('=','') == value.replace('=', ''),
-	"lex": lambda node, value : F.lex_utf8.v(node) == value,
-	"root": lambda node, value : F.g_lex_utf8.v(node) == value
+	"lex_utf8": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value.replace('=', '').replace('/','').replace('[',''),
+	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
+	"gloss": lambda node, value : F.gloss.v(node) == value
 }
 def test_node_with_query(query, node):
 	ret = True
