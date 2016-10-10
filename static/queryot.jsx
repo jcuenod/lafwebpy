@@ -127,7 +127,7 @@ var BibleReference = React.createClass({
 var SearchTerm = React.createClass({
 	render: function() {
 		var lexeme = this.props.data.hasOwnProperty("lex_utf8") ? this.props.data.lex_utf8.replace(/[\/\[=]/g,"") :
-			(this.props.data.hasOwnProperty("g_lex_utf8") ? this.props.data.lex_utf8 : "ANY");
+			(this.props.data.hasOwnProperty("tricons") ? this.props.data.tricons : "ANY");
 		var png_prop = {
 			"nu": {
 				"sg": "s",
@@ -237,7 +237,8 @@ var MorphDisplay = React.createClass({
 	render: function() {
 		var term_to_english = {
 			"categories": {
-				"lex_utf8": "Lexeme",
+				"lex_utf8": "Categorised Lexeme",
+				"tricons": "Triconsonantal Root",
 				"sp": "Part of Speech",
 				"ps": "Person",
 				"nu": "Number",
