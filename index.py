@@ -1,7 +1,10 @@
-import sqlite3, sys, collections, re, xml.etree.ElementTree, json
+from sys import getsizeof
+import sqlite3, sys, collections, re, json
+from collections import defaultdict
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name
 from bottle import route, get, post, request, response, redirect, run, template, static_file
+from lxml import etree
 from laf.fabric import LafFabric
 from etcbc.preprocess import prepare
 
@@ -22,12 +25,34 @@ API=fabric.load(source+version, 'lexicon', 'workshop', {
 }, verbose='DETAIL')
 exec(fabric.localnames.format(var='fabric'))
 
+
+
+# PRECOMPUTE SOME USEFUL DATA
+verse_node_index = defaultdict(lambda : defaultdict(dict))
+word_node_list = []
+
+for n in NN():
+	if F.otype.v(n) == 'verse':
+		verse_node_index[F.book.v(n)][int(F.chapter.v(n))][int(F.verse.v(n))] = n
+	elif F.otype.v(n) == 'word':
+		word_node_list.append(n)
+
 db = sqlite3.connect("parallel_texts.sqlite")
-# query = "select b_eng.* from bibles as b_wlc, bibles as b_eng where b_wlc.parallel=b_eng.parallel and b_wlc.book_number={bk} and b_wlc.chapter={ch} and b_wlc.verse={vs} and b_eng.bibletext_id=1"
 query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
 
+
+
+
+
+### WORD API ###
+
 def remove_tags(text):
-	return ' '.join(xml.etree.ElementTree.fromstring(text).itertext())
+	doc = etree.XML(text)
+	etree.strip_elements(doc, 'netNote', with_tail=False)
+	etree.strip_elements(doc, 'chapter', with_tail=False)
+	etree.strip_tags(doc, 'bodyText')
+	etree.strip_tags(doc, 'br')
+	return etree.tostring(doc).decode("utf-8")
 
 def remove_na(list_to_reduce):
 	templist = list_to_reduce
@@ -38,7 +63,6 @@ def remove_na(list_to_reduce):
 	for key in keys_to_remove:
 		del templist[key]
 	return templist
-
 
 @route('/api/word_data/<node:int>')
 def api(node):
@@ -55,41 +79,17 @@ def api(node):
 		"gloss": F.gloss.v(node)
 	}
 	r = remove_na(r);
-	# return template('json', json=r)
 	response.content_type = 'application/json'
 	return json.dumps(r)
 
-@route('/static/<filename>')
-def static(filename):
-	return static_file(filename, root='static')
 
 
-@post('/<book>/<chapter>')
-def index(book, chapter):
-	book = generous_name(book)
-	for n in NN():
-		if F.otype.v(n) == 'chapter' and F.chapter.v(n) == chapter and F.book.v(n) == book:
-			book_chapter_node = n
-			break
-	# to_p = ''.join('<span data-node="{}">{}</span>{}'.format(w, F.g_word_utf8.v(w), F.trailer_utf8.v(w)) for w in L.d("word", book_chapter_node))
-	ret = []
-	for w in L.d("word", book_chapter_node):
-		ret.append({ "verse": F.verse.v(L.u("verse", w)), "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
-
-	# c = {
-	# 	"reference": book + " " + str(chapter),
-	# 	"chapter_text": to_p,
-	# 	"prev_chapter": "/" + book + "/" + str(int(chapter) - 1),
-	# 	"next_chapter": "/" + book + "/" + str(int(chapter) + 1)
-	# }
-	# return template('main', content=c)
-	response.content_type = 'application/json'
-	return json.dumps(ret)
+### SEARCH API ###
 
 def key_from_passage(a):
-	passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", a["passage"])[0]
-	bindex = book_index(passage_tuple[0])
-	r = bindex * 1000000 + int(passage_tuple[1]) * 1000 + int(passage_tuple[2])
+	ptup = re.findall(r"(\S+) (\d+):(\d+)", a["passage"])[0]
+	bindex = book_index(ptup[0])
+	r = bindex * 1000000 + int(ptup[1]) * 1000 + int(ptup[2])
 	return r
 
 functions = {
@@ -110,12 +110,19 @@ def test_node_with_query(query, node):
 		ret &= functions[key](node, query[key])
 	return ret
 
-def get_p_text(passage):
+def passage_tuple(node):
+	reference = T.passage(node)
+	p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
+	return {
+		"book": p_tuple.group(1),
+		"chapter": int(p_tuple.group(2)),
+		"verse_lower": int(p_tuple.group(3)),
+		"verse_upper": int(p_tuple.group(3) if p_tuple.group(5) is None else p_tuple.group(5))
+	}
+
+def get_p_text(book, chapter, verse):
 	cursor = db.cursor()
-	bk = book_index(passage[0])
-	ch = int(passage[1])
-	vs = int(passage[2])
-	new_query=query.format(bk=bk,ch=ch,vs=vs)
+	new_query=query.format(bk=book_index(book),ch=chapter,vs=verse)
 	cursor.execute(new_query)
 	query_success = cursor.fetchone()
 	if query_success:
@@ -123,6 +130,53 @@ def get_p_text(passage):
 	else:
 		return ""
 	return remove_tags(translated_verse)
+
+def get_parallel_text_from_node(node):
+	p_ret = ""
+	p = passage_tuple(node)
+	for verse in range(p["verse_lower"], p["verse_upper"] + 1):
+		p_ret += get_p_text(p["book"], p["chapter"], verse)
+	return p_ret
+
+def get_words_nodes_of_verse_range_from_node(node):
+	words = []
+	p = passage_tuple(node)
+	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
+		words += L.d('word', verse_node_index[generous_name(p["book"])][p["chapter"]][vs])
+	return T.words(words, fmt='ha').replace('\n','')
+
+def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
+	words = []
+	p = passage_tuple(node)
+	found_word_group = L.d('word', node)
+	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
+		words += L.d('word', verse_node_index[generous_name(p["book"])][p["chapter"]][vs])
+
+	ret_array = []
+	for w in words:
+		if w in found_words:
+			word_significance = "hot"
+		elif w in found_word_group:
+			word_significance = "warm"
+		else:
+			word_significance = "normal"
+
+		if len(ret_array) == 0:
+			ret_array.append({
+				"significance": word_significance,
+				"text": []
+			})
+		elif ret_array[-1]["significance"] is not word_significance:
+			if len(ret_array) > 0:
+				ret_array[-1]["text"] = T.words(ret_array[-1]["text"], fmt='ha').replace('\n','')
+			ret_array.append({
+				"significance": word_significance,
+				"text": []
+			})
+		ret_array[-1]["text"].append(w)
+	if len(ret_array) > 0:
+		ret_array[-1]["text"] = T.words(ret_array[-1]["text"], fmt='ha').replace('\n','')
+	return ret_array
 
 @post('/api/search')
 def search():
@@ -133,41 +187,29 @@ def search():
 	search_type = json_response["search_type"]
 	if search_type not in search_types:
 		search_type = "clause"
-	arr = [[] for i in range(len(query))]
-	for n in NN():
-		if F.otype.v(n) == 'word':
-			q_index = 0
-			word_added = False
-			for q in query:
-				if not word_added and test_node_with_query(q, n):
-					arr[q_index].append(L.u(search_type, n))
-					break
-				q_index += 1
 
-	intersection = list(set.intersection(*map(set, arr)))
+	word_group_with_match = [[] for i in range(len(query))]
+	found_words = []
+	for n in word_node_list:
+		for q_index, q in enumerate(query):
+			if test_node_with_query(q, n):
+				search_type_node = L.u(search_type, n)
+				word_group_with_match[q_index].append(search_type_node)
+				found_words.append({
+					"search_type_node": search_type_node,
+					"word_node": n
+				})
+				break
 
+	intersection = list(set.intersection(*map(set, word_group_with_match)))
 	retval = []
 	for r in intersection:
-		clause_words = L.d('word', r)
-		clause_text = T.words(clause_words, fmt='ha').replace('\n','')
 		passage = T.passage(r)
-
-		# We'll traverse more carefully in the future, this is just temporary
-		verse_node = r
-		if F.otype.v(verse_node) != 'verse':
-			verse_node = L.u('verse', r)
-
-		if verse_node is not None:
-			verse_words = L.d('word', verse_node)
-			heb_verse_text = T.words(verse_words, fmt='ha').replace('\n','')
-			passage_tuple = re.findall(r"(\S+) (\d+):(\d+)", passage)[0]
-			p_text = get_p_text(passage_tuple)
-		else:
-			heb_verse_text = clause_text
-			p_text = ""
-
-		if verse_node == r:
-			clause_text = ""
+		full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
+		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_type_node"] == r, found_words)))
+		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
+		heb_verse_text = full_verse_search_text
+		p_text = get_parallel_text_from_node(r)
 
 		retval.append({
 			"passage": passage,
@@ -176,9 +218,29 @@ def search():
 			"english": p_text
 		})
 	response.content_type = 'application/json'
-	# retval_sorted = sorted(retval, tcmp)
 	retval_sorted = sorted(retval, key=lambda x: key_from_passage(x))
 	return json.dumps(retval_sorted)
+
+
+
+### BARE ESSENTIAL FUNCTIONS ###
+
+@route('/static/<filename>')
+def static(filename):
+	return static_file(filename, root='static')
+
+@post('/<book>/<chapter>')
+def index(book, chapter):
+	book = generous_name(book)
+	for n in NN():
+		if F.otype.v(n) == 'chapter' and F.chapter.v(n) == chapter and F.book.v(n) == book:
+			book_chapter_node = n
+			break
+	ret = []
+	for w in L.d("word", book_chapter_node):
+		ret.append({ "verse": F.verse.v(L.u("verse", w)), "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
+	response.content_type = 'application/json'
+	return json.dumps(ret)
 
 @get('/<book>')
 @get('/<book>/<chapter>')
@@ -187,5 +249,4 @@ def root_page(book="Genesis", chapter="1"):
 	return static_file("/index.html", root='static')
 
 
-# run(host='localhost', port=8080)
 run(host='0.0.0.0', port=8080, debug=True)

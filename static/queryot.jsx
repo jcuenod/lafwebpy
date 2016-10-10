@@ -366,8 +366,12 @@ var TabulatedResults = React.createClass({
 							return (
 								<tr key={i}>
 									<td className="reference"><a href={url}>{row.passage}</a></td>
-									<td className="hebrew">{row.hebrew}</td>
-									<td className="english">{row.english}</td>
+									<td className="hebrew">{row.clause.map((words, i) => {
+											return (
+												<span key={i} className={words.significance}>{words.text}</span>
+											);
+										})}</td>
+									<td className="english" dangerouslySetInnerHTML={{__html: row.english}} />
 								</tr>
 							)
 						}, this)}

@@ -333,7 +333,12 @@ body:after {
 .results_table td.english {
 	text-align: left;
 }
-
+.results_table .hot {
+	color: #d44949;
+}
+.results_table .warm {
+	color: #d48849;
+}
 
 .abstract_selector {
 	position: fixed;
