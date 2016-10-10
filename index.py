@@ -204,6 +204,7 @@ def search():
 				break
 
 	intersection = list(set.intersection(*map(set, word_group_with_match)))
+	print (str(len(intersection)) + " results")
 	retval = []
 	for r in intersection:
 		passage = T.passage(r)
