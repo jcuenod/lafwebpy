@@ -1,279 +1,369 @@
+* {
+	box-sizing: border-box;
+}
 body {
-	margin: 0;
-	padding: 0;
-	border: none;
+	background-color: #fcfcfc;
+	font-family: "Carlito";
+	overflow: hidden;;
 }
-.main {
-	width: 760px;
-	margin: 16vh auto 26vh auto;
-	font-family: "SBL Biblit";
-	font-size: 32px;
-	text-align: right;
+body:after {
+	content: url('/static/ripple.svg') url('/static/search.svg') url('/static/gear.svg') url('/static/menu_arrow.svg');
+	display: none;
 }
-.main span:hover {
-	color: #038;
+.bible_text_container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	overflow: auto;
+}
+.bible_text {
+	position: absolute;
+	top: 0;
+	left: calc(50% + (1100px/2 - 825px));
+	width: 830px;
+	padding: 15vh 3vw;
+	background-color: #fffffa;
+	font-size: 28px;
+	font-family: "Ezra SIL", "SBL Biblit";
+	color: #111;
+	min-height: 100%;
+	box-shadow: 0 0 10px #ddd;
+	direction: rtl;
+}
+.bible_text.is_loading:after {
+	position: fixed;
+	top: 0;
+	left: calc(50% + (1100px/2 - 830px));
+	bottom: 0;
+	width: 830px;
+	background: rgba(255, 255, 255, 0.5) url("/static/ripple.svg") no-repeat;
+	background-size: 50%;
+	background-position: center;
+	content: "";
+}
+.whole_word {
+	display: inline-block;
+}
+.word_bit {
+	direction: ltr;
+	cursor: pointer;
+	display: inline-block;
+}
+.word_bit:hover {
+	color: #d48849;
+}
+.word_trailer {
+	white-space: pre;
+}
+.verse_number {
+	color: #d44949;
+	font-size: 35%;
+	display: inline-block;
+	vertical-align: top;
+	padding: 2px;
+	font-weight: bold;
+}
+
+.search_builder {
+	position: fixed;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 10vh;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
+.search_builder div {
+	flex: 0 1 auto;
+	transition: all 300ms ease;
+	height: 100%;
+}
+.search_builder .search_term {
+	padding: 2px 5px;
+	color: #fff;
+	background-color: #88d;
 	cursor: pointer;
 }
-.footer {
-	position: fixed;
-	top: 14vh;
-	left: 0;
+.search_builder .search_term:hover {
+	background-color: #77c;
+	height: 12vh;
+	border-bottom: 1vh solid #66b;
 }
-.footer div {
-	padding: 2vh;
+.search_builder .search_term:hover p {
+	opacity: 1;
+}
+.search_builder .search_term heading {
+	font-size: 28px;
+	padding: 0 0.5em;
+	text-align: center;
+	display: block;
+}
+.search_builder .search_term p {
+	margin: -5px 0;
+	text-align: center;
 	font-size: 14px;
-	font-family: "Carlito";
-	color: #222;
-	background-color: rgba(255, 255, 255, 0.5);
+	opacity: 0;
+	transition: opacity 300ms ease;
 }
-.properties tr:hover {
+.search_builder .search_term p span {
+	margin: 0 5px;
+}
+.search_builder .do_search {
+	width: 10vh;
+	padding: 0;
+	background: #8d8 url("/static/search.svg") no-repeat;
+	background-size: 65%;
+	background-position: center;
+	border-bottom-right-radius: 5px;
+	cursor: pointer;
+}
+.search_builder .do_search.in-progress,
+.search_builder .do_search.in-progress:hover {
+	background: #8d8 url("/static/ripple.svg") no-repeat;
+	background-size: 65%;
+	background-position: center;
+}
+
+.search_builder .do_search:hover {
+	background-color: #7c7;
+}
+
+.search_builder .search_settings {
+	width: 10vh;
+	margin: 0 1vw;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+.search_builder .search_settings .search_settings_button {
+	position: relative;
+	display: block;
+	width: 6vh;
+	height: 6vh;
+	padding: 0;
+	background: transparent url("/static/gear.svg") no-repeat;
+	background-size: contain;
+	background-position: center;
+	transition: all 300ms ease;
+}
+.search_builder .search_settings_button:hover .search_settings_menu {
+	opacity: 1;
+	display: block;
+	pointer-events: all;
+	top: 7.5vh;
+}
+.search_settings_menu {
+	pointer-events: none;
+	opacity: 0;
+	transition: all 300ms ease;
+	position: absolute;
+	top: 8vh;
+	left: -50%;
+	width: 10em;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border-top: 3px solid #88d;
+	border-bottom: 3px solid #88d;
+	border-radius: 3px;
+}
+.search_settings_menu:before {
+	position: absolute;
+	top: calc(-1.5vh - 2px);
+	height: 1.5vh;
+	width: 100%;
+	background: transparent url("/static/menu_arrow.svg") no-repeat;
+	background-position: 4.5vh 1px;
+	background-size: contain;
+	content: "";
+}
+.search_settings_menu li {
+	line-height: 2em;
+	background-color: #ddd;
+	padding: 0 1em;
+	transition: padding 300ms ease;
+}
+.search_settings_menu li:hover {
+	background-color: #ccc;
+}
+.search_settings_menu li.active {
+	background-color: #dfd;
+	padding-left: 1.5em;
+}
+.search_settings_menu li.active:hover {
+	background-color: #cfc;
+}
+
+
+.search_builder .spacer {
+	flex: 1 1 auto;
+}
+
+.search_builder .bible_reference {
+	flex: 0 1 auto;
+	justify-content: center;
+	align-items: center;
+	height: 6vh;
+	margin-top: 2vh;
+	display: flex;
+}
+.search_builder .bible_reference div {
+	background: #8d8;
+	color: #fff;
+	text-align: center;
+	line-height: 6vh;
+	cursor: pointer;
+	padding-top: 1px;
+}
+.search_builder .bible_reference div:hover {
+	background: #7c7;
+}
+.search_builder .bible_reference .book_nav {
+	padding-left: 1vw;
+	padding-right: 1vw;
+}
+.search_builder .bible_reference .chapter_nav {
+	width: 5vh;
+	font-size: 200%;
+}
+.search_builder .bible_reference .chapter_nav:first-child {
+	border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+}
+.search_builder .bible_reference .chapter_nav:last-child {
+	border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+}
+
+
+
+
+.morph_displayer {
+	position: fixed;
+	left: calc(50% - (1100px/2));
+	width: 270px;
+	top: 15vh;
+	color: #222;
+	text-align: left;
+	font-size: 16px;
+}
+
+.morph_displayer table {
+	table-layout: fixed;
+	width: 100%;
+}
+.morph_displayer tr.active {
+	background-color: #8d8;
+}
+.morph_displayer tr:hover {
 	background-color: #dfd;
 	cursor: pointer;
 }
-.properties tr.selected {
-	background-color: #fdd;
+.morph_displayer tr.active:hover {
+	background-color: #ada;
 }
-.properties tr.selected:hover {
-	background-color: #dfb;
+.morph_displayer td {
+	padding: 2px 8px;
+}
+.add_search_term {
+	text-align: center;
+	font-weight: bold;
+	background-color: #383;
+	color: #fff;
+	cursor: pointer;
+	margin-top: 2vh;
+	border-radius: 3px;
+	transition: background-color 300ms ease;
+}
+.add_search_term:hover {
+	background-color: #5a5;
 }
 
-.searchBuilder {
-	position: fixed;
-	/* need to have this above the morph data */
-	z-index: 1;
-	top: 0;
-	left: 0;
-}
-.doSearch:after {
-	background: url("/static/ripple.svg");
-	display: none;
-	width: 1px;
-	height: 1px;
-	content: "";
-}
-.doSearch {
-	display: inline-block;
-	height: 10vh;
-	min-width: 10vh;
-	font-size: 14px;
-	color: #fff;
-	text-align: center;
-	background: #8d8 url("/static/search.svg");
-    background-size: contain;
-    background-position: center;
-	border-bottom-right-radius: 5px;
-	transition: all 500ms ease;
-	cursor: pointer;
-}
-.doSearch:hover {
-	background: #5d5 url("/static/search.svg") no-repeat;
-	background-size: contain;
-	background-position: center;
-}
-.doSearch.busy:hover,
-.doSearch.busy {
-	background: #8d8 url("/static/ripple.svg") no-repeat;
-	background-size: 82%;
-	background-position: center;
-}
-.termList {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: inline-block;
-	float: left;
-}
-.termList li {
-	display: inline-block;
-	height: 10vh;
-	min-width: 10vh;
-	font-size: 14px;
-	background-color: #88d;
-	color: #fff;
-	text-align: center;
-	transition: all 500ms ease;
-	font-size: 28px;
-	transition: all 500ms ease;
-}
-.termList li:hover {
-	cursor: pointer;
-	height: 13vh;
-	background-color: #55d;
-	border-bottom-left-radius: 2px;
-	border-bottom-right-radius: 2px;
-}
-.termList li.hidden {
-	min-width: 0;
-	width: 0;
-}
-.results {
+
+
+.modal {
+	position: absolute;;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 100;
+	margin: 0;
+	padding: 1%;
 	background-color: rgba(255, 255, 255, 0.9);
 	text-align: center;
-	margin: 0;
-	padding: 0;
 	overflow-y: auto;
-	position: fixed;
+	z-index: 100;
+	opacity: 1;
+	pointer-events: all;
+	transition: opacity 400ms ease;
+}
+.modal.hidden {
+	opacity: 0;
+	pointer-events: none;
 }
 
 
-.results table {
+
+.results_tally {
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+	margin: 0;
+	padding: 0.3em 0;
+}
+.results_table {
 	font-size: 18px;
 	border-spacing: 20px 15px;
 }
-.results table td:nth-child(1) {
+.results_table td.reference {
 	text-align: left;
 	font-size: 80%;
 }
-.results table td.hebrew {
+.results_table td.hebrew {
 	text-align: right;
 	font-family: "Ezra SIL";
 	font-size: 130%;
 }
-.results table td:nth-child(3) {
+.results_table td.english {
 	text-align: left;
 }
-.highlight_clause {
-	color: #a00;
+.results_table .hot {
+	color: #d44949;
+}
+.results_table .warm {
+	color: #d48849;
 }
 
-
-.ref_selector {
-	display: block;
-	position: absolute;
-	top: 3vh;
-	right: 2vw;
-	height: 6vh;
-	font-size: 22px;
-	font-family: Carlito;
-}
-.ref_selector div {
-	display: block;
-	float: left;
-	background: #8d8;
-	line-height: 40px;
-	color: #fff;
-	cursor: pointer;
-	text-align: center;
-	padding: 0 15px;
-}
-.ref_selector div:hover {
-	transition: all 500ms ease;
-	background: #5d5;
-}
-.ref_selector div:first-child,
-.ref_selector div:last-child {
-	padding: 0;
-	width: 40px;
-	height: 40px;
-}
-.ref_selector div:last-child {
-	border-top-right-radius: 5px;
-	border-bottom-right-radius: 5px;
-}
-.ref_selector div:first-child {
-	border-bottom-left-radius: 5px;
-	border-top-left-radius: 5px;
-}
-
-
-.modal_container {
+.abstract_selector {
 	position: fixed;
-	z-index: 100;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(255, 255, 255, 0.7);
-	text-align: center;
-	margin: 0;
-	padding: 5%;
+	left: 10%;
+	top: 8%;
+	width:80%;
+	height: 80%;
+	display: table;
+	border-collapse: separate;
+	table-layout: fixed;
+	border-spacing: 3px;
 }
-.book_link {
-	display: inline-block;
-	margin: 10px;
-	width: 16%;
-	font-size: 22px;
-	text-align: center;
-	background: rgba(136,136,221,0.9);
-	height: 40px;
-	line-height: 40px;
-	text-decoration: none;
-	color: #fff;
-	border-radius: 3px;
-	border-bottom: 2px solid #5D5DA2;
+.abstract_selector .table_row {
+	display: table-row;
 }
-.chapter_link {
-	display: inline-block;
-	margin: 10px;
-	width: 50px;
-	font-size: 32px;
-	text-align: center;
-	background: rgba(136,136,221,0.9);
-	height: 50px;
-	line-height: 50px;
-	text-decoration: none;
-	color: #fff;
-	border-radius: 3px;
-	border-bottom: 2px solid #5D5DA2;
-}
-.chapter_link:hover,
-.book_link:hover {
-	background-color: #55d;
-	border-bottom: 2px solid #2D2DC2;
-}
-
-
-.search_type_combo {
-	float: right;
-	position: relative;
-	background: #8d8;
-	color: #fff;
+.abstract_selector .table_cell {
+	display: table-cell;
+	padding:0;
+	vertical-align: middle;
+	background-color: rgba(220,220,220,0.4);
 	cursor: pointer;
-	text-align: center;
-	height: 7vh;
-	line-height: 4vh;
-	margin: 1.5vh 1vw;
-	font-size: 14px;
-	font-family: Carlito;
-}
-.search_type_combo:hover {
-	background: #7c7;
-}
-.search_type_combo .selected_search_type{
-	padding: 1.5vh 1.7vw;
 	border-radius: 3px;
+	transition: background-color 300ms ease;
 }
-.search_type_combo .options {
-	display: block;
-	width: 100%;
-	position: absolute;
-	top: 8vh;
-	opacity: 0;
-	pointer-events: none;
-	border-bottom-left-radius: 3px;
-	border-bottom-right-radius: 3px;
-	background: #8f8;
-	transition: opacity 400ms ease;
-	transition: top 250ms ease;
-}
-.search_type_combo:hover .options {
-	opacity: 1;
-	top: 7vh;
-	pointer-events: all;
-}
-.search_type_combo .options a {
-	display: block;
-	width: 100%;
-	color: #fff;
-	position: relative;
-	padding: 3px 0;
-	text-decoration: none;
-}
-.search_type_combo .options a:hover {
-	background: #8d8;
+.abstract_selector .table_cell:hover {
+	background-color: #88d;
+	transition: background-color 50ms ease;
 }
