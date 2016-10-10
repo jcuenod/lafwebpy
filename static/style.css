@@ -333,12 +333,26 @@ body:after {
 .results_table td.english {
 	text-align: left;
 }
+.results_table td.english verse {
+	color: #d44949;
+	font-size: 50%;
+	display: inline-block;
+	vertical-align: top;
+	font-weight: bold;
+}
+.results_table td.english poetry {
+	font-style: italic;
+}
+.results_table td.english smallcaps {
+	font-variant: small-caps;
+}
 .results_table .hot {
 	color: #d44949;
 }
 .results_table .warm {
 	color: #d48849;
 }
+
 
 .abstract_selector {
 	position: fixed;
