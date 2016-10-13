@@ -31,11 +31,13 @@ exec(fabric.localnames.format(var='fabric'))
 verse_node_index = defaultdict(lambda : defaultdict(dict))
 word_node_list = []
 
+print (" -- precomputing node data --")
 for n in NN():
 	if F.otype.v(n) == 'verse':
 		verse_node_index[F.book.v(n)][int(F.chapter.v(n))][int(F.verse.v(n))] = n
 	elif F.otype.v(n) == 'word':
 		word_node_list.append(n)
+print (" -- done precomputing --")
 
 db = sqlite3.connect("parallel_texts.sqlite")
 query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
@@ -133,6 +135,15 @@ def get_p_text(book, chapter, verse):
 		return ""
 	return remove_tags(translated_verse)
 
+def get_words_from_verse_node_index(book_name, chapter, verse):
+	try:
+		return L.d('word', verse_node_index[book_name][chapter][verse])
+	except:
+		print(book_name)
+		print(chapter)
+		print(verse)
+		return []
+
 def get_parallel_text_from_node(node):
 	p_ret = ""
 	p = passage_tuple(node)
@@ -144,7 +155,7 @@ def get_words_nodes_of_verse_range_from_node(node):
 	words = []
 	p = passage_tuple(node)
 	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
-		words += L.d('word', verse_node_index[generous_name(p["book"])][p["chapter"]][vs])
+		words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
 	return T.words(words, fmt='ha').replace('\n','')
 
 def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
@@ -152,7 +163,7 @@ def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 	p = passage_tuple(node)
 	found_word_group = L.d('word', node)
 	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
-		words += L.d('word', verse_node_index[generous_name(p["book"])][p["chapter"]][vs])
+		words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
 
 	ret_array = []
 	for w in words:
