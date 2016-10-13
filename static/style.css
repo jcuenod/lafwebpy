@@ -329,6 +329,7 @@ body:after {
 	text-align: right;
 	font-family: "Ezra SIL";
 	font-size: 130%;
+	padding-bottom: 0.3em;
 }
 .results_table td.english {
 	text-align: left;
