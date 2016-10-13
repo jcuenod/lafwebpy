@@ -341,6 +341,7 @@ body:after {
 	font-weight: bold;
 }
 .results_table td.english poetry {
+	display: block;
 	font-style: italic;
 }
 .results_table td.english smallcaps {
