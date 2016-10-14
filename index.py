@@ -50,11 +50,13 @@ query = "select text from p_text where book_number={bk} and heb_chapter={ch} and
 
 def remove_tags(text):
 	doc = etree.XML(text)
-	etree.strip_elements(doc, 'netNote', with_tail=False)
-	etree.strip_elements(doc, 'chapter', with_tail=False)
-	etree.strip_tags(doc, 'bodyText')
-	etree.strip_tags(doc, 'br')
-	return etree.tostring(doc).decode("utf-8")
+	for br in doc.xpath("*//br"):
+		br.tail = " " + br.tail if br.tail else " "
+	for netNote in doc.xpath("*//br"):
+		netNote.tail = " " + netNote.tail if netNote.tail else " "
+	etree.strip_elements(doc, 'netNote', 'chapter', with_tail=False)
+	etree.strip_tags(doc, 'bodyText', 'br')
+	return etree.tostring(doc).decode("utf-8").replace("  ", " ")
 
 def remove_na(list_to_reduce):
 	templist = list_to_reduce
