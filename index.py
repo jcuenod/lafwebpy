@@ -221,16 +221,16 @@ def search():
 	retval = []
 	for r in intersection:
 		passage = T.passage(r)
-		full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
+		# full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
 		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_type_node"] == r, found_words)))
 		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
-		heb_verse_text = full_verse_search_text
+		# heb_verse_text = full_verse_search_text
 		p_text = get_parallel_text_from_node(r)
 
 		retval.append({
 			"passage": passage,
 			"clause": clause_text,
-			"hebrew": heb_verse_text,
+			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
 			"english": p_text
 		})
 	response.content_type = 'application/json'
