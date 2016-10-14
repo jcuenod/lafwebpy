@@ -3,7 +3,7 @@ import sqlite3, sys, collections, re, json
 from collections import defaultdict
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name
-from bottle import route, get, post, request, response, redirect, run, template, static_file
+from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
 from lxml import etree
 from laf.fabric import LafFabric
 from etcbc.preprocess import prepare
@@ -262,5 +262,8 @@ def index(book, chapter):
 def root_page(book="Genesis", chapter="1"):
 	return static_file("/index.html", root='static')
 
+@hook('after_request')
+def enable_cors():
+    response.headers['Access-Control-Allow-Origin'] = '*'
 
 run(host='0.0.0.0', port=8080, debug=True)
