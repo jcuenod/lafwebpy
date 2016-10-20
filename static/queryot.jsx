@@ -237,8 +237,11 @@ var MorphDisplay = React.createClass({
 	render: function() {
 		var term_to_english = {
 			"categories": {
-				"lex_utf8": "Categorised Lexeme",
-				"tricons": "Triconsonantal Root",
+				"lex_utf8": "Sense Lexeme",
+				"tricons": "Consonantal Root",
+				"g_prs_utf8": "Pronominal Suffix",
+				"has_suffix": "Has Pron. Suffix",
+				"g_uvf_utf8": "Univalent Final",
 				"sp": "Part of Speech",
 				"ps": "Person",
 				"nu": "Number",

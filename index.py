@@ -19,6 +19,7 @@ API=fabric.load(source+version, 'lexicon', 'workshop', {
         g_word lex_utf8
         language gloss
         chapter verse
+        g_prs_utf8 g_uvf_utf8
     ''','mother'),
     "prepare": prepare,
     "primary": False,
@@ -58,11 +59,11 @@ def remove_tags(text):
 	etree.strip_tags(doc, 'bodyText', 'br')
 	return etree.tostring(doc).decode("utf-8").replace("  ", " ")
 
-def remove_na(list_to_reduce):
+def remove_na_and_empty_and_unknown(list_to_reduce):
 	templist = list_to_reduce
 	keys_to_remove = set()
 	for key, value in templist.items():
-		if value == "NA":
+		if value == "NA" or value == "" or value == "Unknown":
 			keys_to_remove.add(key)
 	for key in keys_to_remove:
 		del templist[key]
@@ -80,10 +81,12 @@ def api(node):
 		"vt": F.vt.v(node), # vt = verbal tense
 		"vs": F.vs.v(node), # vs = verbal stem
 		"st": F.st.v(node), # construct/absolute/emphatic
-		# "Suffix": F.g_prs_utf8.v(node),
+		"g_prs_utf8": F.g_prs_utf8.v(node),
+		"g_uvf_utf8": F.g_uvf_utf8.v(node),
+		"has_suffix": "yes" if F.g_prs_utf8.v(node) != "" else "no",
 		"gloss": F.gloss.v(node)
 	}
-	r = remove_na(r);
+	r = remove_na_and_empty_and_unknown(r);
 	response.content_type = 'application/json'
 	return json.dumps(r)
 
@@ -106,6 +109,9 @@ functions = {
 	"vs": lambda node, value : F.vs.v(node) == value,
 	"st": lambda node, value : F.st.v(node) == value,
 	"lex_utf8": lambda node, value : F.lex_utf8.v(node) == value,
+	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
+	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
+	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "no"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
 	"gloss": lambda node, value : F.gloss.v(node) == value
