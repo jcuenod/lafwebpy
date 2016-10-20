@@ -63,7 +63,7 @@ def remove_na_and_empty_and_unknown(list_to_reduce):
 	templist = list_to_reduce
 	keys_to_remove = set()
 	for key, value in templist.items():
-		if value == "NA" or value == "" or value == "Unknown":
+		if value == "NA" or value == "" or value == "unknown":
 			keys_to_remove.add(key)
 	for key in keys_to_remove:
 		del templist[key]
@@ -83,7 +83,7 @@ def api(node):
 		"st": F.st.v(node), # construct/absolute/emphatic
 		"g_prs_utf8": F.g_prs_utf8.v(node),
 		"g_uvf_utf8": F.g_uvf_utf8.v(node),
-		"has_suffix": "yes" if F.g_prs_utf8.v(node) != "" else "no",
+		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
 		"gloss": F.gloss.v(node)
 	}
 	r = remove_na_and_empty_and_unknown(r);
@@ -111,7 +111,7 @@ functions = {
 	"lex_utf8": lambda node, value : F.lex_utf8.v(node) == value,
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
-	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "no"),
+	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
 	"gloss": lambda node, value : F.gloss.v(node) == value
