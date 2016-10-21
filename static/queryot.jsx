@@ -240,6 +240,7 @@ var MorphDisplay = React.createClass({
 				"lex_utf8": "Sense Lexeme",
 				"tricons": "Consonantal Root",
 				"g_prs_utf8": "Pronominal Suffix",
+				"is_definite": "Definite",
 				"has_suffix": "Has Pron. Suffix",
 				"g_uvf_utf8": "Univalent Final",
 				"sp": "Part of Speech",
@@ -250,6 +251,10 @@ var MorphDisplay = React.createClass({
 				"vs": "Stem",
 				"st": "State",
 				"gloss": "Gloss"
+			},
+			"is_definite": {
+				"det": "Yes",
+				"und": "No"
 			},
 			"sp": {
 				"art": "Article",

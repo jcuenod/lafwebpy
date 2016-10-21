@@ -20,6 +20,7 @@ API=fabric.load(source+version, 'lexicon', 'workshop', {
         language gloss
         chapter verse
         g_prs_utf8 g_uvf_utf8
+        det
     ''','mother'),
     "prepare": prepare,
     "primary": False,
@@ -81,6 +82,7 @@ def api(node):
 		"vt": F.vt.v(node), # vt = verbal tense
 		"vs": F.vs.v(node), # vs = verbal stem
 		"st": F.st.v(node), # construct/absolute/emphatic
+		"is_definite": F.det.v(L.u("phrase_atom", node)),
 		"g_prs_utf8": F.g_prs_utf8.v(node),
 		"g_uvf_utf8": F.g_uvf_utf8.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
@@ -111,6 +113,7 @@ functions = {
 	"lex_utf8": lambda node, value : F.lex_utf8.v(node) == value,
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
+	"is_definite": lambda node, value : F.det.v(L.u("phrase", node)) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
