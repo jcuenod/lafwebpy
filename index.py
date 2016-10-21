@@ -214,20 +214,20 @@ def search():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
 	query = json_response["query"]
-	search_types = ["clause", "sentence", "paragraph", "verse", "phrase"]
-	search_type = json_response["search_type"]
-	if search_type not in search_types:
-		search_type = "clause"
+	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase"]
+	search_range = json_response["search_range"]
+	if search_range not in search_ranges:
+		search_range = "clause"
 
 	word_group_with_match = [[] for i in range(len(query))]
 	found_words = []
 	for n in word_node_list:
 		for q_index, q in enumerate(query):
 			if test_node_with_query(q, n):
-				search_type_node = L.u(search_type, n)
-				word_group_with_match[q_index].append(search_type_node)
+				search_range_node = L.u(search_range, n)
+				word_group_with_match[q_index].append(search_range_node)
 				found_words.append({
-					"search_type_node": search_type_node,
+					"search_range_node": search_range_node,
 					"word_node": n
 				})
 				break
@@ -237,7 +237,7 @@ def search():
 	retval = []
 	for r in intersection:
 		# full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
-		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_type_node"] == r, found_words)))
+		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_range_node"] == r, found_words)))
 		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
 		# heb_verse_text = full_verse_search_text
 		p_text = get_parallel_text_from_node(r)
@@ -257,18 +257,18 @@ def search():
 def collocations():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
-	search_type = json_response["search_type"]
-	search_types = ["clause", "sentence", "paragraph", "verse", "phrase"]
-	if search_type not in search_types:
-		search_type = "clause"
+	search_range = json_response["search_range"]
+	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase"]
+	if search_range not in search_ranges:
+		search_range = "clause"
 	search_query = json_response["query"]
 
 	word_group_with_match = [[] for i in range(len(search_query))]
 	for n in word_node_list:
 		for q_index, q in enumerate(search_query):
 			if test_node_with_query(q, n):
-				search_type_node = L.u(search_type, n)
-				word_group_with_match[q_index].append(search_type_node)
+				search_range_node = L.u(search_range, n)
+				word_group_with_match[q_index].append(search_range_node)
 				break
 
 	intersection = list(set.intersection(*map(set, word_group_with_match)))

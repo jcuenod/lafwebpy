@@ -200,6 +200,11 @@ body:after {
 .search_settings_menu li.active:hover {
 	background-color: #cfc;
 }
+.search_settings_menu .heading {
+	line-height: 1.3em;
+	background-color: #aaf !important;
+	font-weight: bold;
+}
 
 
 .search_builder .spacer {
@@ -354,6 +359,15 @@ body:after {
 }
 .results_table .warm {
 	color: #d48849;
+}
+
+.collocation_table {
+	margin: 0 auto;
+	table-layout: fixed;
+}
+.collocation_table td:last-child{
+	font-size: large;
+	font-weight: bold;
 }
 
 

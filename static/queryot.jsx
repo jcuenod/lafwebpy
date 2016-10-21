@@ -184,14 +184,16 @@ var SettingsListItem = React.createClass({
 });
 var SearchSettingsMenu = React.createClass({
 	render: function() {
-		var optionElements = this.props.data.option_list.map(function(value, i){
-			return (
-				<SettingsListItem key={i} isSelected={value == this.props.data.selected_value} value={value} onClickHandler={this.props.onClickHandler} />
-			)
-		}, this);
 		return (
 			<ul className="search_settings_menu">
-				{optionElements}
+				<li className="heading">search range</li>
+				{this.props.data.search_ranges.map(function(value, i){
+					return <SettingsListItem key={i} isSelected={value == this.props.data.selected_search_range} value={value} onClickHandler={this.props.setSearchRange} />
+				}, this)}
+				<li className="heading">search type</li>
+				{this.props.data.search_types.map(function(value, i){
+					return <SettingsListItem key={i} isSelected={value == this.props.data.selected_search_type} value={value} onClickHandler={this.props.setSearchType} />
+				}, this)}
 			</ul>
 		);
 	}
@@ -201,7 +203,9 @@ var SearchSettings = React.createClass({
 		return (
 			<div className="search_settings">
 				<div className="search_settings_button">
-					<SearchSettingsMenu data={this.props.menu_settings} onClickHandler={this.props.setSearchType} />
+					<SearchSettingsMenu data={this.props.menu_settings}
+						setSearchRange={this.props.setSearchRange}
+						setSearchType={this.props.setSearchType} />
 				</div>
 			</div>
 		);
@@ -216,7 +220,9 @@ var SearchBuilder = React.createClass({
 			<div className="search_builder">
 				{searchTermElements}
 				<div className={this.props.menu_settings.in_progress ? "do_search in-progress" : "do_search"} onClick={this.props.performSearch}></div>
-				<SearchSettings setSearchType={this.props.setSearchType} menu_settings={this.props.menu_settings} />
+				<SearchSettings menu_settings={this.props.menu_settings}
+					setSearchRange={this.props.setSearchRange}
+					setSearchType={this.props.setSearchType} />
 				<BibleReference referenceSelectionHandler={this.props.referenceSelectionHandler} reference={this.props.currentReference} moveChapterHandler={this.props.moveChapterHandler} />
 				<div className="spacer"></div>
 			</div>
@@ -348,7 +354,6 @@ var MorphDisplay = React.createClass({
 				</table>
 				{this.props.data.reduce(function(p, c) { return p |= c.selected }, false) ?
 					<div className="add_search_term" onClick={this.addSearchTermClickHandler}>add search term</div> : ""}
-				<div className="do_collocation_search" onClick={this.props.doCollocationSearch}>add search term</div>
 			</div>
 		);
 	}
@@ -395,8 +400,8 @@ var CollocationResults = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<div className="collocation_tally">{this.props.data.length} collocations</div>
-				<table className="collocation_table">
+				<div className="results_tally">{this.props.data.length} collocations</div>
+				<table className="results_table collocation_table">
 					<tbody>
 						{this.props.data.map(function(row, i){
 							return (
@@ -436,8 +441,10 @@ var App = React.createClass({
 			"collocationResults": [],
 			"menuSettings": {
 				"in_progress": false,
-				"selected_value": "clause",
-				"option_list": ["phrase","clause","sentence","verse"]
+				"selected_search_range": "clause",
+				"search_ranges": ["phrase","clause","sentence","verse"],
+				"selected_search_type": "normal",
+				"search_types": ["normal","collocation"],
 			},
 			"bookSelectionMode": false,
 			"chapterSelectionMode": false,
@@ -541,9 +548,14 @@ var App = React.createClass({
 		newSearchTerms.splice(index, 1);
 		this.setState({"searchTerms": newSearchTerms});
 	},
-	setSearchType: function(newType) {
+	setSearchRange: function(newValue) {
 		var menu_settings = jQuery.extend(true, {}, this.state.menuSettings);
-		menu_settings.selected_value = newType;
+		menu_settings.selected_search_range = newValue;
+		this.setState({"menuSettings": menu_settings});
+	},
+	setSearchType: function(newValue) {
+		var menu_settings = jQuery.extend(true, {}, this.state.menuSettings);
+		menu_settings.selected_search_type = newValue;
 		this.setState({"menuSettings": menu_settings});
 	},
 	setSearchInProgress: function(inProgress) {
@@ -560,12 +572,21 @@ var App = React.createClass({
 		this.setSearchInProgress(true);
 		var dataToSend = {
 			"query": this.state.searchTerms,
-			"search_type": this.state.menuSettings.selected_value
+			"search_range": this.state.menuSettings.selected_search_range
 		};
 		var context = this;
+		var search_urls = {
+			"normal": this.props.search_url,
+			"collocation": this.props.collocation_search_url,
+		};
+		var states = {
+			"normal": "searchResults",
+			"collocation": "collocationResults",
+		};
+		var stateToUse = states[this.state.menuSettings.selected_search_type];
 		$.ajax({
 			method: "POST",
-			url: this.props.search_url,
+			url: search_urls[this.state.menuSettings.selected_search_type],
 			data: JSON.stringify(dataToSend)
 		})
 		.done(function(data) {
@@ -575,7 +596,9 @@ var App = React.createClass({
 			}
 			else
 			{
-				context.setState({"searchResults": data})
+				var newState = {};
+				newState[stateToUse] = data;
+				context.setState(newState);
 			}
 			context.setSearchInProgress(false);
 		})
@@ -586,33 +609,6 @@ var App = React.createClass({
 	},
 	clearResults: function() {
 		this.setState({"searchResults": []});
-	},
-	doCollocationSearch: function() {
-		var dataToSend = {
-			"query": this.state.searchTerms,
-			"search_type": this.state.menuSettings.selected_value
-		};
-		var context = this;
-		$.ajax({
-			method: "POST",
-			url: this.props.collocation_search_url,
-			data: JSON.stringify(dataToSend)
-		})
-		.done(function(data) {
-			if (data.length === 0)
-			{
-				alert("Your search did not yield any results");
-			}
-			else
-			{
-				context.setState({"collocationResults": data})
-			}
-			context.setSearchInProgress(false);
-		})
-		.fail(function(msg){
-			alert("Hmm, something went wrong with that search. Sorry about that...");
-			context.setSearchInProgress(false);
-		});
 	},
 	clearCollocationResults: function() {
 		this.setState({"collocationResults": []});
@@ -657,6 +653,7 @@ var App = React.createClass({
 			<div>
 				<SearchBuilder data={this.state.searchTerms}
 					searchTermClickHandler={this.removeSearchTerm}
+					setSearchRange={this.setSearchRange}
 					setSearchType={this.setSearchType}
 					menu_settings={this.state.menuSettings}
 					performSearch={this.performSearch}
@@ -672,7 +669,6 @@ var App = React.createClass({
 
 				 <MorphDisplay data={this.state.morphData}
 					onClickHandler={this.toggleMorphSelection}
-					doCollocationSearch={this.doCollocationSearch}
 					addSearchTerm={this.addSearchTerm} />
 
 				<Modal isVisible={this.state.searchResults.length > 0}
