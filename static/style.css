@@ -25,8 +25,9 @@ body:after {
 	width: 830px;
 	padding: 15vh 3vw;
 	background-color: #fffffa;
-	font-size: 28px;
-	font-family: "Ezra SIL", "SBL Biblit";
+	font-size: 33px;
+	font-family: "Ezra SIL", "SBL Hebrew", "SBL Biblit";
+	line-height: 150%;
 	color: #111;
 	min-height: 100%;
 	box-shadow: 0 0 10px #ddd;
