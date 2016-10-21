@@ -348,6 +348,7 @@ var MorphDisplay = React.createClass({
 				</table>
 				{this.props.data.reduce(function(p, c) { return p |= c.selected }, false) ?
 					<div className="add_search_term" onClick={this.addSearchTermClickHandler}>add search term</div> : ""}
+				<div className="do_collocation_search" onClick={this.props.doCollocationSearch}>add search term</div>
 			</div>
 		);
 	}
@@ -390,6 +391,27 @@ var TabulatedResults = React.createClass({
 		);
 	}
 });
+var CollocationResults = React.createClass({
+	render: function() {
+		return (
+			<div>
+				<div className="collocation_tally">{this.props.data.length} collocations</div>
+				<table className="collocation_table">
+					<tbody>
+						{this.props.data.map(function(row, i){
+							return (
+								<tr key={i}>
+									<td className="hebrew">{row.lexeme}</td>
+									<td className="reference">{row.count}</td>
+								</tr>
+							)
+						}, this)}
+					</tbody>
+				</table>
+			</div>
+		);
+	}
+});
 
 
 var App = React.createClass({
@@ -411,6 +433,7 @@ var App = React.createClass({
 			"morphData": [],
 			"searchTerms": [],
 			"searchResults": [],
+			"collocationResults": [],
 			"menuSettings": {
 				"in_progress": false,
 				"selected_value": "clause",
@@ -557,12 +580,42 @@ var App = React.createClass({
 			context.setSearchInProgress(false);
 		})
 		.fail(function(msg){
-			alert("Hmm, something went wrong with that search. Sorry about that... Try refreshing the page.");
+			alert("Hmm, something went wrong with that search. Sorry about that...");
 			context.setSearchInProgress(false);
 		});
 	},
 	clearResults: function() {
 		this.setState({"searchResults": []});
+	},
+	doCollocationSearch: function() {
+		var dataToSend = {
+			"query": this.state.searchTerms,
+			"search_type": this.state.menuSettings.selected_value
+		};
+		var context = this;
+		$.ajax({
+			method: "POST",
+			url: this.props.collocation_search_url,
+			data: JSON.stringify(dataToSend)
+		})
+		.done(function(data) {
+			if (data.length === 0)
+			{
+				alert("Your search did not yield any results");
+			}
+			else
+			{
+				context.setState({"collocationResults": data})
+			}
+			context.setSearchInProgress(false);
+		})
+		.fail(function(msg){
+			alert("Hmm, something went wrong with that search. Sorry about that...");
+			context.setSearchInProgress(false);
+		});
+	},
+	clearCollocationResults: function() {
+		this.setState({"collocationResults": []});
 	},
 	changeMode: function(mode_type, is_on) {
 		var newState = {};
@@ -619,11 +672,17 @@ var App = React.createClass({
 
 				 <MorphDisplay data={this.state.morphData}
 					onClickHandler={this.toggleMorphSelection}
+					doCollocationSearch={this.doCollocationSearch}
 					addSearchTerm={this.addSearchTerm} />
 
 				<Modal isVisible={this.state.searchResults.length > 0}
 					onClickHandler={this.clearResults}>
 					<TabulatedResults data={this.state.searchResults} />
+				</Modal>
+
+				<Modal isVisible={this.state.collocationResults.length > 0}
+					onClickHandler={this.clearCollocationResults}>
+					<CollocationResults data={this.state.collocationResults} />
 				</Modal>
 
 				<Modal isVisible={this.state.bookSelectionMode}
@@ -643,6 +702,6 @@ var App = React.createClass({
 });
 
 ReactDOM.render(
-	<App root_url="http://localhost:8080/" morph_api_url="/api/word_data" search_url="/api/search" />,
+	<App root_url="http://localhost:8080/" morph_api_url="/api/word_data" search_url="/api/search" collocation_search_url="/api/collocations" />,
 	document.getElementById('app')
 );

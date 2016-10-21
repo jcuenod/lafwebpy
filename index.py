@@ -2,7 +2,7 @@ from sys import getsizeof
 import sqlite3, sys, collections, re, json
 from collections import defaultdict
 from io import TextIOWrapper
-from morphological_lists import book_index, generous_name
+from morphological_lists import book_index, generous_name, book_abbreviation
 from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
 from lxml import etree
 from laf.fabric import LafFabric
@@ -97,7 +97,7 @@ def api(node):
 ### SEARCH API ###
 
 def key_from_passage(a):
-	ptup = re.findall(r"(\S+) (\d+):(\d+)", a["passage"])[0]
+	ptup = re.findall(r"(.*) (\d+):(\d+)", a["passage"])[0]
 	bindex = book_index(ptup[0])
 	r = bindex * 1000000 + int(ptup[1]) * 1000 + int(ptup[2])
 	return r
@@ -202,6 +202,13 @@ def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 		ret_array[-1]["text"] = T.words(ret_array[-1]["text"], fmt='ha').replace('\n','')
 	return ret_array
 
+def passage_abbreviation(reference):
+	p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
+	ret = book_abbreviation(p_tuple.group(1)) + " " + p_tuple.group(2) + ":" + p_tuple.group(3)
+	if p_tuple.group(5) is not None:
+		ret += "-" + p_tuple.group(5)
+	return ret
+
 @post('/api/search')
 def search():
 	json_response = json.load(TextIOWrapper(request.body))
@@ -229,7 +236,6 @@ def search():
 	print (str(len(intersection)) + " results")
 	retval = []
 	for r in intersection:
-		passage = T.passage(r)
 		# full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
 		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_type_node"] == r, found_words)))
 		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
@@ -237,14 +243,58 @@ def search():
 		p_text = get_parallel_text_from_node(r)
 
 		retval.append({
-			"passage": passage,
+			"passage": passage_abbreviation(T.passage(r)),
 			"clause": clause_text,
 			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
 			"english": p_text
 		})
-	response.content_type = 'application/json'
 	retval_sorted = sorted(retval, key=lambda x: key_from_passage(x))
+
+	response.content_type = 'application/json'
 	return json.dumps(retval_sorted)
+
+@post('/api/collocations')
+def collocations():
+	json_response = json.load(TextIOWrapper(request.body))
+	print(json_response)
+	search_type = json_response["search_type"]
+	search_types = ["clause", "sentence", "paragraph", "verse", "phrase"]
+	if search_type not in search_types:
+		search_type = "clause"
+	search_query = json_response["query"]
+
+	word_group_with_match = [[] for i in range(len(search_query))]
+	for n in word_node_list:
+		for q_index, q in enumerate(search_query):
+			if test_node_with_query(q, n):
+				search_type_node = L.u(search_type, n)
+				word_group_with_match[q_index].append(search_type_node)
+				break
+
+	intersection = list(set.intersection(*map(set, word_group_with_match)))
+	word_list = []
+	for n in intersection:
+		word_list += L.d("word", n)
+
+	word_tally = {}
+	for word in word_list:
+		w = F.lex_utf8.v(word)
+		if w in word_tally:
+			word_tally[w] += 1
+		else:
+			word_tally[w] = 1
+
+	word_tally_list = []
+	for key in word_tally:
+		word_tally_list.append({
+			"lexeme": key,
+			"count": word_tally[key]
+		})
+
+	word_tally_list_sorted = sorted(word_tally_list, key=lambda w: -w["count"])
+
+	response.content_type = 'application/json'
+	return json.dumps(word_tally_list_sorted)
 
 
 
