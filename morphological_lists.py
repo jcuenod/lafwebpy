@@ -72,6 +72,7 @@ generous_book_names = {
 	"Song_of_Songs": "Canticum",
 	"Song_of_songs": "Canticum",
 	"Songs": "Canticum",
+	"Song": "Canticum",
 	"Cant": "Canticum",
 	"Ecclesiastes": "Ecclesiastes",
 	"Eccl": "Ecclesiastes",
