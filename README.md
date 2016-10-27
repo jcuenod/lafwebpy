@@ -4,7 +4,7 @@ What's more exciting than a name, however, is the fact that we will one day be a
 
 To run, you need `laf-fabric` and `bottle`. You also need [laf-fabric-data](https://github.com/ETCBC/laf-fabric-data) so follow the link and read the readme (it's short) and make sure you set up laf-fabric.cfg (in this folder, it's `.gitignore`d). Then cd into this directory and:
 
-  python3 index.py
+    python3 index.py
 
 and visit `localhost:8080/` in your favourite browser.
 
