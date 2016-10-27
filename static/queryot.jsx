@@ -345,11 +345,29 @@ var MorphDisplay = React.createClass({
 				"NA": "NA"
 			}
 		};
+		var category_weights = {
+			"vs": -10,
+			"vt": -9,
+			"lex_utf8": -8,
+			"ps": -7,
+			"nu": -6,
+			"gn": -5,
+			"sp": -4,
+			"gloss": 1,
+		};
+		var morph_data = this.props.data.slice();
+		morph_data.sort(function(a, b){
+			var keyA = category_weights.hasOwnProperty(a.k) ? category_weights[a.k] : 0,
+				keyB = category_weights.hasOwnProperty(b.k) ? category_weights[b.k] : 0;
+			if(keyA < keyB) return -1;
+			if(keyA > keyB) return 1;
+			return 0;
+		});
 		return (
 			<div className="morph_displayer">
 				<table>
 					<tbody>
-						{this.props.data.map(function(morph, i){
+						{morph_data.map(function(morph, i){
 							var kv_key = term_to_english["categories"][morph.k];
 							var kv_value = term_to_english.hasOwnProperty(morph.k) ? term_to_english[morph.k][morph.v] : morph.v;
 							return <tr key={i} className={morph.selected ? "active" : ""} onClick={() => this.props.onClickHandler(morph.k)}><td>{kv_key}</td><td>{kv_value}</td></tr>;
@@ -671,7 +689,7 @@ var App = React.createClass({
 						isLoading={this.state.isLoading} />
 				</div>
 
-				 <MorphDisplay data={this.state.morphData}
+				<MorphDisplay data={this.state.morphData}
 					onClickHandler={this.toggleMorphSelection}
 					addSearchTerm={this.addSearchTerm} />
 
