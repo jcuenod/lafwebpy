@@ -1,12 +1,10 @@
 var WordBit = React.createClass({
-	onClickHandler: function(e) {
-		this.props.updateSelectedWordBit(this.props.wordbit.wid)
-	},
 	render: function() {
 		var trailer_to_use = this.props.wordbit.trailer.replace("\n", "  ");
 		return (
 			<span>
-				<span className="word_bit" onClick={this.onClickHandler}>
+				<span className={this.props.active_wid == this.props.wordbit.wid ? "word_bit active" : "word_bit"}
+						onClick={() => this.props.updateSelectedWordBit(this.props.wordbit.wid)}>
 					{this.props.wordbit.bit}
 				</span>
 				<span className="word_trailer">
@@ -25,7 +23,7 @@ var WholeWord = React.createClass({
 			}
 			else
 			{
-				return <WordBit key={i} wordbit={bit} updateSelectedWordBit={this.props.updateSelectedWordBit} />;
+				return <WordBit key={i} wordbit={bit} updateSelectedWordBit={this.props.updateSelectedWordBit} active_wid={this.props.active_wid} />;
 			}
 		}, this);
 		return (
@@ -36,8 +34,14 @@ var WholeWord = React.createClass({
 	}
 });
 var BibleText = React.createClass({
+	getInitialState: function() {
+		return {
+			"active_wid": 0
+		};
+	},
 	handleWordBitSelected: function(wid) {
-		this.props.updateSelectedWordBit(wid)
+		this.setState({"active_wid": wid});
+		this.props.updateSelectedWordBit(wid);
 	},
 	render: function() {
 		var lastVerse = 0;
@@ -59,7 +63,7 @@ var BibleText = React.createClass({
 			return toReturn;
 		}, [[]]).filter(function(el){return el.length > 0});
 		var wordElements = words.map(function(word, i) {
-			return <WholeWord key={i} word_bits={word} updateSelectedWordBit={this.handleWordBitSelected} />;
+			return <WholeWord key={i} word_bits={word} updateSelectedWordBit={this.handleWordBitSelected} active_wid={this.state.active_wid} />;
 		}, this);
 		return (
 			<div className={this.props.isLoading ? "bible_text is_loading" : "bible_text"}>

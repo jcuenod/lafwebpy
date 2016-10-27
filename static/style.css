@@ -55,6 +55,9 @@ body:after {
 .word_bit:hover {
 	color: #d48849;
 }
+.word_bit.active {
+	color: #d44949;
+}
 .word_trailer {
 	white-space: pre;
 }
