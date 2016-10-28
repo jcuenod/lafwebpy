@@ -206,6 +206,7 @@ body:after {
 .search_settings_menu .heading {
 	line-height: 1.3em;
 	background-color: #aaf !important;
+	color: #eef;
 	font-weight: bold;
 }
 
