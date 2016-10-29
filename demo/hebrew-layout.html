@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Hebrew Display Test</title>
+	<meta name="author" content="James Cuénod">
+
+	<style type="text/css">
+		body {
+			background-color: #eee;
+			max-width: 420px;
+			margin: auto;
+		}
+		p {
+			font-family: Verdana, sans-serif;
+		}
+		.attempt {
+			font-family: "SBL Biblit", "SBL Hebrew";
+			font-size: 35px;
+			background-color: #f8f8f8;
+			margin: 10px;
+			padding: 15px;
+		}
+		.word_bit:hover {
+			color: #f00;
+			cursor: pointer;
+		}
+		.no2 {
+			direction: rtl;
+		}
+
+		.no3 {
+			direction: rtl;
+		}
+
+		.no4 {
+			direction: rtl;
+		}
+		.no4 .whole_word {
+			display: inline-block;
+		}
+
+		.no5 {
+			direction: rtl;
+		}
+		.no5 .whole_word {
+			display: inline-block;
+		}
+		.no5 .word_bit {
+			display: inline-block;
+			direction: ltr;
+		}
+	</style>
+</head>
+
+<body>
+	<p>
+		1. Regular ol' Hebrew text in a div
+	</p>
+	<div class="attempt no1">
+		פָּדָ֣ה ֯נפשׁי מֵעֲבֹ֣ר בַּשָּׁ֑חַת ֯ו֯חיתי בָּאֹ֥ור תִּרְאֶֽה׃
+	</div>
+	<p>
+		2. But this is rtl text so let's actually style it as such
+	</p>
+	<div class="attempt no2">
+		פָּדָ֣ה ֯נפשׁי מֵעֲבֹ֣ר בַּשָּׁ֑חַת ֯ו֯חיתי בָּאֹ֥ור תִּרְאֶֽה׃
+	</div>
+	<p>
+		3. But we need to click/hover on each bit of the word so we wrap all the bits in spans (now try hovering) but note the wrapping around ֯ו֯חיתי - at times the diacritics are separated from the words they go with.
+		Note that there is no masora circle associated with בַּשָּׁ֑חַת.
+	</p>
+	<div class="attempt no3">
+		<span class="word_bit">פָּדָ֣ה</span>
+		<span class="word_bit">֯נפשׁי</span>
+		<span class="word_bit">מֵ</span><span class="word_bit">עֲבֹ֣ר</span>
+		<span class="word_bit">בַּ</span><span class="word_bit"></span><span class="word_bit">שָּׁ֑חַת</span>
+		<span class="word_bit">֯ו</span><span class="word_bit">֯חיתי</span>
+		<span class="word_bit">בָּ</span><span class="word_bit"></span><span class="word_bit">אֹ֥ור</span>
+		<span class="word_bit">תִּרְאֶֽה</span>׃
+	</div>
+	<p>
+		4. So we wrap whole words together (and put their trailers into the spans so that maqef units don't break things etc.) and we set the spans to display as inline-blocks so that they don't break.
+	</p>
+	<div class="attempt no4">
+		<span class="whole_word">
+			<span>
+				<span class="word_bit">פָּדָ֣ה</span><span class="word_trailer"> </span>
+			</span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">֯נפשׁי</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">מֵ</span><span class="word_trailer"></span></span><!--
+		 --><span><span class="word_bit">עֲבֹ֣ר</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">בַּ</span><span class="word_trailer"></span></span><!--
+	  --><span><span class="word_bit">שָּׁ֑חַת</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">֯ו</span><span class="word_trailer"></span></span><!--
+		 --><span><span class="word_bit">֯חיתי</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">בָּ</span><span class="word_trailer"></span></span><!--
+		 --><span><span class="word_bit">אֹ֥ור</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">תִּרְאֶֽה</span><span class="word_trailer">׃  </span></span>
+		</span>
+	</div>
+	<p>
+		5. Initially I had thought that the masora circles were supposed to appear on the left. This can be accomplished by making "word bit"s inline-blocks as well and changing their text direction ltr. But I think the solution above is preferable.
+	</p>
+	<div class="attempt no5">
+		<span class="whole_word">
+			<span>
+				<span class="word_bit">פָּדָ֣ה</span><span class="word_trailer"> </span>
+			</span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">֯נפשׁי</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">מֵ</span><span class="word_trailer"></span></span><!--
+		 --><span><span class="word_bit">עֲבֹ֣ר</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">בַּ</span><span class="word_trailer"></span></span><!--
+	  --><span><span class="word_bit">שָּׁ֑חַת</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">֯ו</span><span class="word_trailer"></span></span><!--
+		 --><span><span class="word_bit">֯חיתי</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">בָּ</span><span class="word_trailer"></span></span><!--
+		 --><span><span class="word_bit">אֹ֥ור</span><span class="word_trailer"> </span></span>
+		</span>
+		<span class="whole_word">
+			<span><span class="word_bit">תִּרְאֶֽה</span><span class="word_trailer">׃  </span></span>
+		</span>
+	</div>
+</body>
+</html>
