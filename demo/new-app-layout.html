@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>New Layout</title>
+	<meta name="author" content="James Cuénod">
+
+	<style type="text/css">
+	body {
+		min-height: 100%;
+		width: 100%;
+		margin: 0;
+		overflow: auto;
+	}
+	.icon_panel {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 6vw;
+		height: 100vh;
+		background-color: #eee;
+		flex-basis: 100px;
+	}
+	.information_panel {
+		position: fixed;
+		top: 0;
+		left: 6vw;
+		width: 22vw;
+		height: 100vh;
+		background-color: #fee;
+	}
+	.main_panel {
+		position: absolute;
+		top: 0;
+		left: 28vw;
+		right: 0;
+		min-height: 100vh;
+		background-color: #eef;
+		flex-grow: 1;
+		font-family: "SBL Hebrew", "SBL Biblit";
+		font-size: 3vw;
+		line-height: 160%;
+		padding: 1em 1.3em;
+		direction: rtl;
+	}
+
+	.icon_panel {
+		display: flex;
+		flex-direction: column;
+	}
+	.location_piece {
+		box-sizing: border-box;
+		flex-basis: 10vh;
+		background-color: #afa;
+		transition: background-color 300ms ease;
+		position: relative;
+		cursor: pointer;
+	}
+	.location_piece:hover {
+		background-color: #cfc;
+	}
+	.location_piece::before {
+		position: absolute;
+		bottom: 3px;
+		left: 50%;
+		height: 3px;
+		background-color: #8d8;
+		width: 0%;
+		content: "";
+		display: block;
+		transition: width 300ms ease, left 300ms ease;
+		border-radius: 1.5px;
+	}
+	.location_piece:hover::before {
+		width: 70%;
+		left: 15%;
+	}
+	.icon_piece {
+		box-sizing: border-box;
+		flex-basis: 10vh;
+		background-color: #aaf;
+		transition: background-color 300ms ease;
+		position: relative;
+		cursor: pointer;
+	}
+	.icon_piece:hover {
+		background-color: #ccf;
+	}
+	.icon_piece::after {
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 0;
+		content: "";
+		background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='20'><path fill='#fee' d='M10 20L10 0 0 10z'/><path fill='none' d='M0-38h48v48H0z'/></svg>")  no-repeat;
+		background-size: contain;
+		background-position: right;
+		transition: width 300ms ease;
+	}
+	.icon_piece:hover::after {
+		width: 15%;
+	}
+
+	.information_panel {
+		display: flex;
+		flex-direction: column;
+	}
+	.reference_menu {
+		flex-basis: 10vh;
+		background-color: #afa;
+
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="panel icon_panel">
+		<div class="location_piece">!</div>
+		<div class="icon_piece">a</div>
+		<div class="icon_piece">b</div>
+		<div class="icon_piece">c</div>
+		<div class="icon_piece">d</div>
+	</div>
+	<div class="panel information_panel">
+		<div class="reference_menu">
+		</div>
+		<div class="information_panel_content panel">
+		</div>
+	</div>
+	<div class="panel main_panel">
+		1וְֽאוּלָ֗ם שְׁמַֽע־נָ֣א אִיֹּ֣וב מִלָּ֑י וְֽכָל־דְּבָרַ֥י הַאֲזִֽינָה׃  2הִנֵּה־נָ֭א פָּתַ֣חְתִּי פִ֑י דִּבְּרָ֖ה לְשֹׁונִ֣י בְחִכִּֽי׃  3יֹֽשֶׁר־לִבִּ֥י אֲמָרָ֑י וְדַ֥עַת שְׂ֝פָתַ֗י בָּר֥וּר מִלֵּֽלוּ׃  4רֽוּחַ־אֵ֥ל עָשָׂ֑תְנִי וְנִשְׁמַ֖ת שַׁדַּ֣י תְּחַיֵּֽנִי׃  5אִם־תּוּכַ֥ל הֲשִׁיבֵ֑נִי עֶרְכָ֥ה לְ֝פָנַ֗י הִתְיַצָּֽבָה׃  6הֵן־אֲנִ֣י כְפִ֣יךָ לָאֵ֑ל מֵ֝חֹ֗מֶר קֹרַ֥צְתִּי גַם־אָֽנִי׃  7הִנֵּ֣ה אֵ֭מָתִי לֹ֣א תְבַעֲתֶ֑ךָּ וְ֝אַכְפִּ֗י עָלֶ֥יךָ לֹא־יִכְבָּֽד׃  8אַ֭ךְ אָמַ֣רְתָּ בְאָזְנָ֑י וְקֹ֖ול מִלִּ֣ין אֶשְׁמָֽע׃  9זַ֥ךְ אֲנִ֗י בְּֽלִ֫י פָ֥שַׁע חַ֥ף אָנֹכִ֑י וְלֹ֖א עָוֹ֣ן לִֽי׃  10הֵ֣ן תְּ֭נוּאֹות עָלַ֣י יִמְצָ֑א יַחְשְׁבֵ֖נִי לְאֹויֵ֣ב לֹֽו׃  11יָשֵׂ֣ם בַּסַּ֣ד רַגְלָ֑י יִ֝שְׁמֹ֗ר כָּל־אָרְחֹתָֽי׃  12הֶן־זֹ֣את לֹא־צָדַ֣קְתָּ אֶעֱנֶ֑ךָּ כִּֽי־יִרְבֶּ֥ה אֱ֝לֹ֗והַ מֵאֱנֹֽושׁ׃  13מַ֭דּוּעַ אֵלָ֣יו רִיבֹ֑ותָ כִּ֥י כָל־דְּ֝בָרָ֗יו לֹ֣א־יַעֲנֶֽה׃  14כִּֽי־בְאַחַ֥ת יְדַבֶּר־אֵ֑ל וּ֝בִשְׁתַּ֗יִם לֹ֣א יְשׁוּרֶֽנָּה׃  15בַּחֲלֹ֤ום ׀ חֶזְיֹ֬ון לַ֗יְלָה בִּנְפֹ֣ל תַּ֭רְדֵּמָה עַל־אֲנָשִׁ֑ים בִּ֝תְנוּמֹ֗ות עֲלֵ֣י מִשְׁכָּֽב׃  16אָ֣ז יִ֭גְלֶה אֹ֣זֶן אֲנָשִׁ֑ים וּבְמֹ֖סָרָ֣ם יַחְתֹּֽם׃  17לְ֭הָסִיר אָדָ֣ם מַעֲשֶׂ֑ה וְגֵוָ֖ה מִגֶּ֣בֶר יְכַסֶּֽה׃  18יַחְשֹׂ֣ךְ נַ֭פְשֹׁו מִנִּי־שָׁ֑חַת וְ֝חַיָּתֹ֗ו מֵעֲבֹ֥ר בַּשָּֽׁלַח׃  19וְהוּכַ֣ח בְּ֭מַכְאֹוב עַל־מִשְׁכָּבֹ֑ו ֯ו֯ריב עֲצָמָ֣יו אֵתָֽן׃  20וְזִֽהֲמַ֣תּוּ חַיָּתֹ֣ו לָ֑חֶם וְ֝נַפְשֹׁ֗ו מַאֲכַ֥ל תַּאֲוָֽה׃  21יִ֣כֶל בְּשָׂרֹ֣ו מֵרֹ֑אִי ֯ו֯שׁפי עַ֝צְמֹותָ֗יו לֹ֣א רֻאּֽוּ׃  22וַתִּקְרַ֣ב לַשַּׁ֣חַת נַפְשֹׁ֑ו וְ֝חַיָּתֹ֗ו לַֽמְמִתִֽים׃  23אִם־יֵ֤שׁ עָלָ֨יו ׀ מַלְאָ֗ךְ מֵלִ֗יץ אֶחָ֥ד מִנִּי־אָ֑לֶף לְהַגִּ֖יד לְאָדָ֣ם יָשְׁרֹֽו׃  24וַיְחֻנֶּ֗נּוּ וַיֹּ֗אמֶר פְּ֭דָעֵהוּ מֵרֶ֥דֶת שָׁ֗חַת מָצָ֥אתִי כֹֽפֶר׃  25רֻֽטֲפַ֣שׁ בְּשָׂרֹ֣ו מִנֹּ֑עַר יָ֝שׁ֗וּב לִימֵ֥י עֲלוּמָֽיו׃  26יֶעְתַּ֤ר אֶל־אֱלֹ֨והַּ ׀ וַיִּרְצֵ֗הוּ וַיַּ֣רְא פָּ֭נָיו בִּתְרוּעָ֑ה וַיָּ֥שֶׁב לֶ֝אֱנֹ֗ושׁ צִדְקָתֹֽו׃  27יָשֹׁ֤ר ׀ עַל־אֲנָשִׁ֗ים וַיֹּ֗אמֶר חָ֭טָאתִי וְיָשָׁ֥ר הֶעֱוֵ֗יתִי וְלֹא־שָׁ֥וָה לִֽי׃  28פָּדָ֣ה ֯נפשׁי מֵעֲבֹ֣ר בַּשָּׁ֑חַת ֯ו֯חיתי בָּאֹ֥ור תִּרְאֶֽה׃  29הֶן־כָּל־אֵ֭לֶּה יִפְעַל־אֵ֑ל פַּעֲמַ֖יִם שָׁלֹ֣ושׁ עִם־גָּֽבֶר׃  30לְהָשִׁ֣יב נַ֭פְשֹׁו מִנִּי־שָׁ֑חַת לֵ֝אֹ֗ור בְּאֹ֣ור הַֽחַיִּים׃  31הַקְשֵׁ֖ב אִיֹּ֥וב שְֽׁמַֽע־לִ֑י הַ֝חֲרֵ֗שׁ וְאָנֹכִ֥י אֲדַבֵּֽר׃  32אִם־יֵשׁ־מִלִּ֥ין הֲשִׁיבֵ֑נִי דַּ֝בֵּ֗ר כִּֽי־חָפַ֥צְתִּי צַדְּקֶֽךָּ׃  33אִם־אַ֭יִן אַתָּ֥ה שְֽׁמַֽע־לִ֑י הַ֝חֲרֵ֗שׁ וַאֲאַלֶּפְךָ֥ חָכְמָֽה׃ ס
+	</div>
+</body>
+</html>
