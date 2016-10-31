@@ -414,6 +414,7 @@ var TabulatedResults = React.createClass({
 						}, this)}
 					</tbody>
 				</table>
+				<br /><i>Scripture quoted by permission. All scripture quotations, unless otherwise indicated, are taken from the <a href="http://netbible.org">NET Bible</a>® copyright ©1996-2016 by Biblical Studies Press, L.L.C. All rights reserved.</i>
 			</div>
 		);
 	}
