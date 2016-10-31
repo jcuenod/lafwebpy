@@ -47,12 +47,8 @@ body:after {
 .whole_word {
 	display: inline-block;
 }
-.word_bit {
-	direction: ltr;
-	cursor: pointer;
-	display: inline-block;
-}
 .word_bit:hover {
+	cursor: pointer;
 	color: #d48849;
 }
 .word_bit.active {
