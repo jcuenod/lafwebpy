@@ -332,6 +332,7 @@ def api_book_chapter():
 @get('/<filename:re:.*\.js>')
 @get('/<filename:re:.*\.css>')
 @get('/<filename:re:.*\.svg>')
+@get('/<filename:re:.*\.map>')
 @route('/static/<filename>')
 def static(filename):
 	return static_file(filename, root='../react-lafwebpy-client/build')
