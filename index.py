@@ -335,6 +335,6 @@ def root_page(book="Genesis", chapter="1"):
 
 @hook('after_request')
 def enable_cors():
-    response.headers['Access-Control-Allow-Origin'] = '*'
+	response.headers['Access-Control-Allow-Origin'] = '*'
 
 run(host='0.0.0.0', port=8080, debug=True)
