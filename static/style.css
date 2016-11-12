@@ -4,10 +4,10 @@
 body {
 	background-color: #fcfcfc;
 	font-family: "Carlito";
-	overflow: hidden;;
+	overflow: hidden;
 }
 body:after {
-	content: url('/static/ripple.svg') url('/static/search.svg') url('/static/gear.svg') url('/static/menu_arrow.svg');
+	content: url('/images/ripple.svg') url('/images/search.svg') url('/images/gear.svg') url('/images/menu_arrow.svg');
 	display: none;
 }
 .bible_text_container {
@@ -39,7 +39,7 @@ body:after {
 	left: calc(50% + (1100px/2 - 830px));
 	bottom: 0;
 	width: 830px;
-	background: rgba(255, 255, 255, 0.5) url("/static/ripple.svg") no-repeat;
+	background: rgba(255, 255, 255, 0.5) url("/images/ripple.svg") no-repeat;
 	background-size: 50%;
 	background-position: center;
 	content: "";
@@ -76,6 +76,7 @@ body:after {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
+	transition: opacity 300ms ease;
 }
 .search_builder div {
 	flex: 0 1 auto;
@@ -115,7 +116,7 @@ body:after {
 .search_builder .do_search {
 	width: 10vh;
 	padding: 0;
-	background: #8d8 url("/static/search.svg") no-repeat;
+	background: #8d8 url("/images/search.svg") no-repeat;
 	background-size: 65%;
 	background-position: center;
 	border-bottom-right-radius: 5px;
@@ -123,7 +124,7 @@ body:after {
 }
 .search_builder .do_search.in-progress,
 .search_builder .do_search.in-progress:hover {
-	background: #8d8 url("/static/ripple.svg") no-repeat;
+	background: #8d8 url("/images/ripple.svg") no-repeat;
 	background-size: 65%;
 	background-position: center;
 }
@@ -147,7 +148,7 @@ body:after {
 	width: 6vh;
 	height: 6vh;
 	padding: 0;
-	background: transparent url("/static/gear.svg") no-repeat;
+	background: transparent url("/images/gear.svg") no-repeat;
 	background-size: contain;
 	background-position: center;
 	transition: all 300ms ease;
@@ -178,7 +179,7 @@ body:after {
 	top: calc(-1.5vh - 2px);
 	height: 1.5vh;
 	width: 100%;
-	background: transparent url("/static/menu_arrow.svg") no-repeat;
+	background: transparent url("/images/menu_arrow.svg") no-repeat;
 	background-position: 4.5vh 1px;
 	background-size: contain;
 	content: "";
