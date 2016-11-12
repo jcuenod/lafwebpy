@@ -234,6 +234,12 @@ def search():
 
 	intersection = list(set.intersection(*map(set, word_group_with_match)))
 	print (str(len(intersection)) + " results")
+
+	# Truncate array if too long
+	if len(intersection) > 200:
+		intersection = intersection[:100]
+		print ("Abbreviating to just 100 elements")
+
 	retval = []
 	for r in intersection:
 		# full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
