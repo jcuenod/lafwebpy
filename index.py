@@ -269,6 +269,10 @@ def collocations():
 			if test_node_with_query(q, n):
 				search_range_node = L.u(search_range, n)
 				word_group_with_match[q_index].append(search_range_node)
+				# found_words.append({
+				# 	"search_range_node": search_range_node,
+				# 	"word_node": n
+				# })
 				break
 
 	intersection = list(set.intersection(*map(set, word_group_with_match)))
