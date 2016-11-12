@@ -1,0 +1,1 @@
+Static files are now being built by the frontend code which is housed in a separate repository (https://github.com/jcuenod/react-lafwebpy-client) removing them from this folder prevents us from keeping legacy builds floating around.
