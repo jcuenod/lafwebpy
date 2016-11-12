@@ -310,6 +310,9 @@ def collocations():
 
 ### BARE ESSENTIAL FUNCTIONS ###
 
+@get('/<filename:re:.*\.js>')
+@get('/<filename:re:.*\.css>')
+@get('/<filename:re:.*\.svg>')
 @route('/static/<filename>')
 def static(filename):
 	return static_file(filename, root='static')
