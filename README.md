@@ -1,6 +1,6 @@
 # Lafwebpy - Query the Hebrew OT
 
-Lafwebpy is a python server (using `bottle`) that imports WIVU's ETCBC Hebrew data and provides api access to it to return (1) parsing data on words as well as (2) search results and (3) collocations based on search terms.
+Lafwebpy is a python server (using `bottle`) that exposes ETCBC Hebrew data (using [`laf-fabric`](https://github.com/ETCBC/laf-fabric)) and provides api access to it to return (1) parsing data on words as well as (2) search results and (3) collocations based on search terms.
 
 To interact with all this goodness, we need a fantastic frontend. Enter [`react-lafwebpy-client`](https://github.com/jcuenod/react-lafwebpy-client).* To use these repositories, clone them both to a parent directory. `Lafwebpy` is going to serve static content from `../react-lafwebpy-client/build` so directory structure is important. `React-lafwebpy-client` should be good to go (everything is built) but it uses webpack so you can `npm install` and start playing around with it if you so desire.
 
