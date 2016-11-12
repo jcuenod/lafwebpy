@@ -326,11 +326,21 @@ def api_book_chapter():
 	response.content_type = 'application/json'
 	return json.dumps(ret)
 
+
+### BARE ESSENTIAL FUNCTIONS ###
+
+@get('/<filename:re:.*\.js>')
+@get('/<filename:re:.*\.css>')
+@get('/<filename:re:.*\.svg>')
+@route('/static/<filename>')
+def static(filename):
+	return static_file(filename, root='../react-lafwebpy-client/build')
+
 @get('/<book>')
 @get('/<book>/<chapter>')
 @route('/')
 def root_page(book="Genesis", chapter="1"):
-	return static_file("/index.html", root='static')
+	return static_file("/index.html", root='../react-lafwebpy-client/build')
 
 @hook('after_request')
 def enable_cors():
