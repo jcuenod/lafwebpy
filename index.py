@@ -70,8 +70,11 @@ def remove_na_and_empty_and_unknown(list_to_reduce):
 		del templist[key]
 	return templist
 
-@route('/api/word_data/<node:int>')
-def api(node):
+@post('/api/word_data')
+def api_word_data():
+	json_response = json.load(TextIOWrapper(request.body))
+	print(json_response)
+	node = int(json_response["word_id"])
 	r = {
 		"tricons": F.lex_utf8.v(node).replace('=', '').replace('/','').replace('[',''),
 		"lex_utf8": F.lex_utf8.v(node),
@@ -210,7 +213,7 @@ def passage_abbreviation(reference):
 	return ret
 
 @post('/api/search')
-def search():
+def api_search():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
 	query = json_response["query"]
@@ -260,7 +263,7 @@ def search():
 	return json.dumps(retval_sorted)
 
 @post('/api/collocations')
-def collocations():
+def api_collocations():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
 	search_range = json_response["search_range"]
@@ -307,19 +310,12 @@ def collocations():
 	return json.dumps(word_tally_list_sorted)
 
 
-
-### BARE ESSENTIAL FUNCTIONS ###
-
-@get('/<filename:re:.*\.js>')
-@get('/<filename:re:.*\.css>')
-@get('/<filename:re:.*\.svg>')
-@route('/static/<filename>')
-def static(filename):
-	return static_file(filename, root='static')
-
-@post('/<book>/<chapter>')
-def index(book, chapter):
-	book = generous_name(book)
+@post('/api/book_chapter')
+def api_book_chapter():
+	json_response = json.load(TextIOWrapper(request.body))
+	print(json_response)
+	book = generous_name(json_response["book"])
+	chapter = str(json_response["chapter"]) # This needs to be a string for the if...
 	for n in NN():
 		if F.otype.v(n) == 'chapter' and F.chapter.v(n) == chapter and F.book.v(n) == book:
 			book_chapter_node = n
