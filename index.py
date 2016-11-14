@@ -262,6 +262,23 @@ def api_search():
 	response.content_type = 'application/json'
 	return json.dumps(retval_sorted)
 
+
+def appended_formatted_list(original_dict, node):
+	new_dict = original_dict.copy()
+	reference = node
+	p_tuple = passage_tuple(reference)
+	abbreviated_book_name = book_abbreviation(p_tuple["book"])
+	if abbreviated_book_name not in original_dict:
+		new_dict[abbreviated_book_name] = {}
+	if p_tuple["chapter"] not in new_dict[abbreviated_book_name]:
+		new_dict[abbreviated_book_name][p_tuple["chapter"]] = []
+	verse_range = p_tuple["verse_lower"]
+	if p_tuple["verse_lower"] is not p_tuple["verse_upper"]:
+		verse_range += "-" + p_tuple["verse_upper"]
+	if verse_range not in new_dict[abbreviated_book_name][p_tuple["chapter"]]:
+		new_dict[abbreviated_book_name][p_tuple["chapter"]].append(verse_range)
+	return new_dict
+
 @post('/api/collocations')
 def api_collocations():
 	json_response = json.load(TextIOWrapper(request.body))
@@ -278,10 +295,6 @@ def api_collocations():
 			if test_node_with_query(q, n):
 				search_range_node = L.u(search_range, n)
 				word_group_with_match[q_index].append(search_range_node)
-				# found_words.append({
-				# 	"search_range_node": search_range_node,
-				# 	"word_node": n
-				# })
 				break
 
 	intersection = list(set.intersection(*map(set, word_group_with_match)))
@@ -293,15 +306,20 @@ def api_collocations():
 	for word in word_list:
 		w = F.lex_utf8.v(word)
 		if w in word_tally:
-			word_tally[w] += 1
+			word_tally[w]["count"] += 1
+			word_tally[w]["references"] = appended_formatted_list(word_tally[w]["references"], word)
 		else:
-			word_tally[w] = 1
+			word_tally[w] = {
+				"count": 1,
+				"references": appended_formatted_list({}, word)
+			}
 
 	word_tally_list = []
 	for key in word_tally:
 		word_tally_list.append({
 			"lexeme": key,
-			"count": word_tally[key]
+			"count": word_tally[key]["count"],
+			"references": word_tally[key]["references"]
 		})
 
 	word_tally_list_sorted = sorted(word_tally_list, key=lambda w: -w["count"])
