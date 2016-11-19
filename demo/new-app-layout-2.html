@@ -1,0 +1,307 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>New Layout</title>
+	<meta name="author" content="James Cuénod">
+
+	<style type="text/css">
+	body {
+		min-height: 100%;
+		width: 100%;
+		margin: 0;
+		overflow: auto;
+	}
+	.header_bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 50px;
+		background: #d1d6e3;
+		display: flex;
+		z-index: 1;
+	}
+	.header_button {
+		flex: 0;
+		flex-basis: 20px;
+		line-height: 45px;
+		background-color: #f00;
+		text-align: center;
+		color: white;
+		font-weight: bold;
+		font-family: Open Sans;
+		cursor: pointer;
+		transition: all 150ms ease;
+	}
+	.header_spacer {
+		flex: 1;
+	}
+
+	.header_search_holder {
+		flex: 1;
+		flex-basis: calc((100vw - 980px)/2 + 250px);
+		display: flex;
+	}
+
+	.search--new_term {
+		box-sizing: border-box;
+		padding: 0;
+		flex-basis: 20px;
+		min-width: 20px;
+		z-index: 10;
+		text-align: right;
+		padding-right: 5px;
+		background: #3c3d40;
+		line-height: 60px;
+	}
+	.search--new_term:hover {
+		flex-basis: 50px;
+		min-width: 50px;
+	}
+	.search--new_term::after {
+		box-sizing: border-box;
+		width: 28px;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		content: "+";
+		color: #ddd;
+		background: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSI1MCI+PHBhdGggZmlsbD0iIzc2N2M5MiIgZD0iTTAgMGgyMHYxMi41TDI4IDI1bC04IDEyLjVWNTBIMHoiLz48L3N2Zz4=") no-repeat;
+		line-height: 48px;
+		font-weight: bold;
+		text-align: left;
+		padding: 0 5px;
+	}
+	.search--new_term:hover::after {
+		color: #fff;
+	}
+
+	.search--search_term {
+		position: relative;
+		font-size: 170%;
+		background-color: #56575b;
+		padding: 0 20px;
+		height: 50px;
+		transition: height 150ms ease;
+	}
+	.search--search_term.active,
+	.search--search_term:hover {
+		background-color: #3c3d40;
+		height: 60px;
+	}
+	.search--search_term::after {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 13px;
+		height: 20px;
+		opacity: 0;
+		content: "edit";
+		color: hsl(224, 3%, 90%);
+		font-size: 8pt;
+		transition: opacity 150ms ease;
+	}
+	.search--search_term.active::after {
+		content: "done";
+	}
+	.search--search_term:hover::after {
+		opacity: 1;
+	}
+	.search--remove_search_term {
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 20px;
+		line-height: 18px;
+		margin: 0;
+		background-color: #fb5f5f;
+		color: hsl(0, 95%, 95%);
+		font-size: 8pt;
+		transform: scale(1, 0) translateY(-15px);
+		transition: transform 150ms ease, opacity 200ms ease;
+		padding: 0;
+		opacity: 1;
+	}
+	.search--search_term:hover .search--remove_search_term {
+		transform: scale(1) translateY(15px);
+		opacity: 1;
+	}
+	.search--remove_search_term:hover {
+		background-color: hsl(0, 95%, 50%);
+		color: #fff;
+	}
+
+	.search--search_term.active .search--remove_search_term {
+		opacity: 0;
+	}
+
+	.search--search_term::before {
+		position: absolute;
+		bottom: 13px;
+		left: 15%;
+		height: 2px;
+		background-color: #327afa;
+		width: 70%;
+		content: "";
+		border-radius: 1.5px;
+		transform: scale(0, 1) translateY(-7px);
+		transition: transform 150ms ease;
+	}
+	.search--search_term.active::before {
+		transform: scale(1, 1) translateY(0);
+	}
+	.search--search_term.active:hover::before {
+		transform: scale(1, 1) translateY(-7px);
+		background-color: #5ffb61;
+	}
+
+	.search--search_term.active {
+		background: #3c3d40;
+		background-size: contain;
+	}
+
+	.search--do_search {
+		padding: 0;
+		flex-basis: 50px;
+		min-width: 50px;
+		background: #5f97fb url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMC41IiBoZWlnaHQ9IjIwLjMiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik05IDBDNi41IDAgNC4yIDEgMi41IDIuNi0xIDYtMSAxMS42IDIuNiAxNS4yYzMgMyA3LjcgMy40IDExLjIgMWwzLjYgMy44Yy41LjQgMS4yLjQgMS42IDBsMS4yLTEuMmMuNC0uNC40LTEgMC0xLjVsLTMuOC0zLjhjMi0zLjQgMS43LTgtMS4yLTExQzEzLjQgMSAxMS4yIDAgOSAwem0wIDMuNGMxLjMgMCAyLjcuNiAzLjcgMS42IDIgMi4yIDIgNS42IDAgNy43LTIgMi01LjUgMi03LjcgMC0yLTItMi01LjUgMC03LjcgMS0xIDIuNS0xLjYgNC0xLjZ6Ii8+PC9zdmc+") center no-repeat;
+	}
+	.search--do_search:hover {
+		background-color: #327afa;
+	}
+	.search--search_settings {
+		padding: 0;
+		flex-basis: 50px;
+		min-width: 50px;
+		background: transparent url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMC41IiBoZWlnaHQ9IjIwLjEiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik05IDIwYy0uMy0uMy0uNS0uNy0xLTEuOC0uMy0uOC0uMy0xLS43LTFsLS41LS4yLTEgLjQtMS41LjZDNCAxOCA0IDE4IDMgMTcuMmMtLjctLjgtLjgtMS0uOC0xLjIgMC0uMi4yLTEgLjgtMi4yLjItLjQuMi0uNCAwLS44bC0uMi0uNC0xLS40LTEuNS0uNi0uMy0uM1YxMGMwLTEuNSAwLTEuMyAxLjYtMiAxLjItLjUgMS4yLS41IDEuNC0xbC0uNC0xLjZMMiA0LjJDMiA0IDIgMy44IDMgM2MxLTEgMS0xIDIuNy0uNGwxIC41aC41Yy40IDAgLjQgMCAxLTFDOCAxIDguNS41IDguNi4zTDkgMGgxYzEuNSAwIDEuNCAwIDIgMS42LjYgMSAuNiAxIDEgMS4zaC40bDEtLjdMMTYgMmMuNCAwIC40IDAgMS4yIDEgLjcuNSAxIC44IDEgMWwtLjggMi0uMy42LjUuNS4yLjggMSAuNGMuNiAwIDEuMy41IDEuNC42bC41LjJ2Mi41bC0uNC4zLTEuMi42Yy0xIC42LTEgLjctMS4yIDEtLjIuNS0uMi40LjQgMS44bC4yIDEuM3MtLjIuNS0xIDFjLTEgMS4zLS44IDEtMi42LjVsLTEtLjRIMTNjLS40LjQtLjQuNC0xIDEuNSAwIC42LS4zIDEtLjQgMS4zbC0uMi4zSDl6bTIuOC02LjhjMS40LS43IDIuMi0yLjMgMi0zLjctLjMtMS4yLTEtMi0yLTIuNi0uNi0uNy0uNy0uNy0xLjYtLjctLjggMC0xIDAtMS41LjMtMSAuNC0xLjYgMS0yIDIuMi0uMyAxLjMuNCAzIDEuNyAzLjcuNy40IDEuMi41IDIgLjUuNyAwIDEgMCAxLjQtLjN6Ii8+PC9zdmc+") center no-repeat;
+	}
+	.search--search_settings:hover {
+		background-color: #b7c2d9;
+	}
+
+
+	.header_reference_holder {
+		flex: 1;
+		flex-basis: calc((100vw - 980px)/2 + 730px);
+		display: flex;
+	}
+
+	.reference--chapter_arrow,
+	.reference--reference_text {
+		position: relative;
+		background: transparent;
+		padding: 0 15px;
+	}
+
+	.reference--chapter_arrow:hover,
+	.reference--reference_text:hover {
+		background: #b7c2d9;
+	}
+	.reference--reference_text::before {
+		position: absolute;
+		bottom: 15px;
+		left: 50%;
+		height: 2px;
+		background-color: #fff;
+		width: 0%;
+		content: "";
+		display: block;
+		transition: width 150ms ease, left 150ms ease;
+		border-radius: 1.5px;
+	}
+	.reference--reference_text:hover::before {
+		width: 70%;
+		left: 15%;
+	}
+
+	.information_panel {
+		position: fixed;
+		top: 50px;
+		left: 0;
+		width: calc((100vw - 980px)/2 + 250px);
+		min-width: 250px;
+		bottom: 0;
+		background-color: #efefef;
+	}
+
+
+	.main_panel {
+		position: absolute;
+		top: 50px;
+		left: calc((100vw - 980px)/2 + 250px);
+		right: 0;
+		padding: 3vh 3vw;
+		background-color: #fafafa;
+		font-size: 33px;
+		font-family: "Ezra SIL", "SBL Hebrew", "SBL Biblit";
+		line-height: 150%;
+		color: #282931;
+		min-height: 100%;
+		box-shadow: 0 0 5px #bbb;
+		direction: rtl;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="header_bar">
+		<div class="header_search_holder">
+			<div class="header_button search--new_term">…</div>
+			<div class="header_button search--search_term">בצר<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">ו<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">נחלה<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">בצר<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">ו<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">נחלה<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">בצר<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">ו<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--search_term">נחלה<div class="search--remove_search_term">remove</div></div>
+			<div class="header_button search--do_search"></div>
+			<div class="header_spacer"></div>
+		</div>
+		<div class="header_reference_holder">
+			<div class="header_spacer"></div>
+			<div class="header_button reference--chapter_arrow">«</div>
+			<div class="header_button reference--reference_text">PSALM&nbsp;144</div>
+			<div class="header_button reference--chapter_arrow">»</div>
+			<div class="header_spacer"></div>
+			<div class="header_button search--search_settings"></div>
+		</div>
+	</div>
+	<div class="panel information_panel">
+		<div class="reference_menu">
+		</div>
+		<div class="information_panel_content panel">
+		</div>
+	</div>
+	<div class="panel main_panel">
+		1וְֽאוּלָ֗ם שְׁמַֽע־נָ֣א אִיֹּ֣וב מִלָּ֑י וְֽכָל־דְּבָרַ֥י הַאֲזִֽינָה׃  2הִנֵּה־נָ֭א פָּתַ֣חְתִּי פִ֑י דִּבְּרָ֖ה לְשֹׁונִ֣י בְחִכִּֽי׃  3יֹֽשֶׁר־לִבִּ֥י אֲמָרָ֑י וְדַ֥עַת שְׂ֝פָתַ֗י בָּר֥וּר מִלֵּֽלוּ׃  4רֽוּחַ־אֵ֥ל עָשָׂ֑תְנִי וְנִשְׁמַ֖ת שַׁדַּ֣י תְּחַיֵּֽנִי׃  5אִם־תּוּכַ֥ל הֲשִׁיבֵ֑נִי עֶרְכָ֥ה לְ֝פָנַ֗י הִתְיַצָּֽבָה׃  6הֵן־אֲנִ֣י כְפִ֣יךָ לָאֵ֑ל מֵ֝חֹ֗מֶר קֹרַ֥צְתִּי גַם־אָֽנִי׃  7הִנֵּ֣ה אֵ֭מָתִי לֹ֣א תְבַעֲתֶ֑ךָּ וְ֝אַכְפִּ֗י עָלֶ֥יךָ לֹא־יִכְבָּֽד׃  8אַ֭ךְ אָמַ֣רְתָּ בְאָזְנָ֑י וְקֹ֖ול מִלִּ֣ין אֶשְׁמָֽע׃  9זַ֥ךְ אֲנִ֗י בְּֽלִ֫י פָ֥שַׁע חַ֥ף אָנֹכִ֑י וְלֹ֖א עָוֹ֣ן לִֽי׃  10הֵ֣ן תְּ֭נוּאֹות עָלַ֣י יִמְצָ֑א יַחְשְׁבֵ֖נִי לְאֹויֵ֣ב לֹֽו׃  11יָשֵׂ֣ם בַּסַּ֣ד רַגְלָ֑י יִ֝שְׁמֹ֗ר כָּל־אָרְחֹתָֽי׃  12הֶן־זֹ֣את לֹא־צָדַ֣קְתָּ אֶעֱנֶ֑ךָּ כִּֽי־יִרְבֶּ֥ה אֱ֝לֹ֗והַ מֵאֱנֹֽושׁ׃  13מַ֭דּוּעַ אֵלָ֣יו רִיבֹ֑ותָ כִּ֥י כָל־דְּ֝בָרָ֗יו לֹ֣א־יַעֲנֶֽה׃  14כִּֽי־בְאַחַ֥ת יְדַבֶּר־אֵ֑ל וּ֝בִשְׁתַּ֗יִם לֹ֣א יְשׁוּרֶֽנָּה׃  15בַּחֲלֹ֤ום ׀ חֶזְיֹ֬ון לַ֗יְלָה בִּנְפֹ֣ל תַּ֭רְדֵּמָה עַל־אֲנָשִׁ֑ים בִּ֝תְנוּמֹ֗ות עֲלֵ֣י מִשְׁכָּֽב׃  16אָ֣ז יִ֭גְלֶה אֹ֣זֶן אֲנָשִׁ֑ים וּבְמֹ֖סָרָ֣ם יַחְתֹּֽם׃  17לְ֭הָסִיר אָדָ֣ם מַעֲשֶׂ֑ה וְגֵוָ֖ה מִגֶּ֣בֶר יְכַסֶּֽה׃  18יַחְשֹׂ֣ךְ נַ֭פְשֹׁו מִנִּי־שָׁ֑חַת וְ֝חַיָּתֹ֗ו מֵעֲבֹ֥ר בַּשָּֽׁלַח׃  19וְהוּכַ֣ח בְּ֭מַכְאֹוב עַל־מִשְׁכָּבֹ֑ו ֯ו֯ריב עֲצָמָ֣יו אֵתָֽן׃  20וְזִֽהֲמַ֣תּוּ חַיָּתֹ֣ו לָ֑חֶם וְ֝נַפְשֹׁ֗ו מַאֲכַ֥ל תַּאֲוָֽה׃  21יִ֣כֶל בְּשָׂרֹ֣ו מֵרֹ֑אִי ֯ו֯שׁפי עַ֝צְמֹותָ֗יו לֹ֣א רֻאּֽוּ׃  22וַתִּקְרַ֣ב לַשַּׁ֣חַת נַפְשֹׁ֑ו וְ֝חַיָּתֹ֗ו לַֽמְמִתִֽים׃  23אִם־יֵ֤שׁ עָלָ֨יו ׀ מַלְאָ֗ךְ מֵלִ֗יץ אֶחָ֥ד מִנִּי־אָ֑לֶף לְהַגִּ֖יד לְאָדָ֣ם יָשְׁרֹֽו׃  24וַיְחֻנֶּ֗נּוּ וַיֹּ֗אמֶר פְּ֭דָעֵהוּ מֵרֶ֥דֶת שָׁ֗חַת מָצָ֥אתִי כֹֽפֶר׃  25רֻֽטֲפַ֣שׁ בְּשָׂרֹ֣ו מִנֹּ֑עַר יָ֝שׁ֗וּב לִימֵ֥י עֲלוּמָֽיו׃  26יֶעְתַּ֤ר אֶל־אֱלֹ֨והַּ ׀ וַיִּרְצֵ֗הוּ וַיַּ֣רְא פָּ֭נָיו בִּתְרוּעָ֑ה וַיָּ֥שֶׁב לֶ֝אֱנֹ֗ושׁ צִדְקָתֹֽו׃  27יָשֹׁ֤ר ׀ עַל־אֲנָשִׁ֗ים וַיֹּ֗אמֶר חָ֭טָאתִי וְיָשָׁ֥ר הֶעֱוֵ֗יתִי וְלֹא־שָׁ֥וָה לִֽי׃  28פָּדָ֣ה ֯נפשׁי מֵעֲבֹ֣ר בַּשָּׁ֑חַת ֯ו֯חיתי בָּאֹ֥ור תִּרְאֶֽה׃  29הֶן־כָּל־אֵ֭לֶּה יִפְעַל־אֵ֑ל פַּעֲמַ֖יִם שָׁלֹ֣ושׁ עִם־גָּֽבֶר׃  30לְהָשִׁ֣יב נַ֭פְשֹׁו מִנִּי־שָׁ֑חַת לֵ֝אֹ֗ור בְּאֹ֣ור הַֽחַיִּים׃  31הַקְשֵׁ֖ב אִיֹּ֥וב שְֽׁמַֽע־לִ֑י הַ֝חֲרֵ֗שׁ וְאָנֹכִ֥י אֲדַבֵּֽר׃  32אִם־יֵשׁ־מִלִּ֥ין הֲשִׁיבֵ֑נִי דַּ֝בֵּ֗ר כִּֽי־חָפַ֥צְתִּי צַדְּקֶֽךָּ׃  33אִם־אַ֭יִן אַתָּ֥ה שְֽׁמַֽע־לִ֑י הַ֝חֲרֵ֗שׁ וַאֲאַלֶּפְךָ֥ חָכְמָֽה׃ ס
+	</div>
+	<script language="javascript">
+	var inputs = document.querySelectorAll(".search--search_term")
+	for (i = 0; i < inputs.length; i++) {
+		(function(i) {
+			inputs[i].addEventListener('click', function() {
+				if (this.classList.contains("active")) {
+					this.classList.remove('active');
+				}
+				else {
+					if (document.querySelector(".active")) document.querySelector(".active").classList.remove("active");
+					this.classList.add('active');
+				}
+			});
+		})(i);
+	}
+	var inputs = document.querySelectorAll(".search--remove_search_term")
+	for (i = 0; i < inputs.length; i++) {
+		(function(i) {
+			inputs[i].addEventListener('click', function() {
+				this.parentNode.parentNode.removeChild(this.parentNode);
+			});
+		})(i);
+	}
+	</script>
+</body>
+</html>
