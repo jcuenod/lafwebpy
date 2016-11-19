@@ -11,6 +11,7 @@
 		width: 100%;
 		margin: 0;
 		overflow: auto;
+		background: #efefef;
 	}
 	.header_bar {
 		position: fixed;
@@ -135,6 +136,7 @@
 
 	.search--search_term.active .search--remove_search_term {
 		opacity: 0;
+		pointer-events: none;
 	}
 
 	.search--search_term::before {
@@ -228,13 +230,35 @@
 	.information_panel {
 		position: fixed;
 		top: 50px;
-		left: 0;
-		width: calc((100vw - 980px)/2 + 250px);
-		min-width: 250px;
+		left: calc((100vw - 980px)/2);
+		width: 250px;
 		bottom: 0;
-		background-color: #efefef;
+		padding: 30px 0;
 	}
-
+	.morph_data {
+		display: table;
+		font-size: 14px;
+		cursor: pointer;
+	}
+	.morph_data:hover {
+		background-color: #5f97fb;
+	}
+	.morph_key {
+		font-weight: bold;
+		font-size: 80%;
+		text-transform:uppercase;
+		width: 150px;
+		display: table-cell;
+		padding: 5px 2px 5px 12px;
+	}
+	.morph_value {
+		display: table-cell;
+		width: 100px;
+		padding: 5px 12px 5px 2px;
+	}
+	.morph_value.hebrew {
+		font-family: "Ezra SIL";
+	}
 
 	.main_panel {
 		position: absolute;
@@ -284,6 +308,46 @@
 		<div class="reference_menu">
 		</div>
 		<div class="information_panel_content panel">
+			<div class="morph_data">
+				<span class="morph_key">Lexical Root</span>
+				<span class="morph_value hebrew">יכל</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Part of Speech</span>
+				<span class="morph_value">Verb</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Stem</span>
+				<span class="morph_value">Qal</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Tense</span>
+				<span class="morph_value">Impf</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Person</span>
+				<span class="morph_value">2nd</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Number</span>
+				<span class="morph_value">sg</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Gender</span>
+				<span class="morph_value">Masc</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Has Suffix</span>
+				<span class="morph_value">No</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Root</span>
+				<span class="morph_value hebrew">יכל</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Gloss</span>
+				<span class="morph_value">be able</span>
+			</div>
 		</div>
 	</div>
 	<div class="panel main_panel">
