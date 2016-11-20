@@ -234,30 +234,60 @@
 		width: 250px;
 		bottom: 0;
 		padding: 30px 0;
+		font-family: "Open Sans";
 	}
 	.morph_data {
 		display: table;
+		width: 100%;
 		font-size: 14px;
 		cursor: pointer;
+		color: #3c3d40;
 	}
 	.morph_data:hover {
+		background-color: #d1d6e3;
+		color: #000;
+	}
+	.morph_data.active {
 		background-color: #5f97fb;
+		color: #eee;
+	}
+	.morph_data.active:hover {
+		background-color: #327afa;
+		color: #fff;
 	}
 	.morph_key {
 		font-weight: bold;
 		font-size: 80%;
 		text-transform:uppercase;
-		width: 150px;
+		width: 130px;
 		display: table-cell;
-		padding: 5px 2px 5px 12px;
+		padding: 0 2px 0 12px;
+		vertical-align:middle;
 	}
 	.morph_value {
 		display: table-cell;
-		width: 100px;
-		padding: 5px 12px 5px 2px;
+		padding: 8px 12px 6px 2px;
+		line-height: 15px;
 	}
 	.morph_value.hebrew {
 		font-family: "Ezra SIL";
+		vertical-align:middle;;
+	}
+	.create_term {
+		border-radius: 5px;
+		background-color: #56575b;
+		color: #eee;
+		text-align: center;
+		font-weight: bold;
+		padding: 5px;
+		cursor: pointer;
+		margin: 10px 10px 0 5px;
+		text-transform: uppercase;
+		font-size: 80%;
+	}
+	.create_term:hover {
+		background-color: #3c3d40;
+		color: #fff;
 	}
 
 	.main_panel {
@@ -348,6 +378,9 @@
 				<span class="morph_key">Gloss</span>
 				<span class="morph_value">be able</span>
 			</div>
+			<div class="create_term">
+				create search term<br />from selection
+			</div>
 		</div>
 	</div>
 	<div class="panel main_panel">
@@ -373,6 +406,14 @@
 		(function(i) {
 			inputs[i].addEventListener('click', function() {
 				this.parentNode.parentNode.removeChild(this.parentNode);
+			});
+		})(i);
+	}
+	var inputs = document.querySelectorAll(".morph_data")
+	for (i = 0; i < inputs.length; i++) {
+		(function(i) {
+			inputs[i].addEventListener('click', function() {
+				this.classList.toggle('active');
 			});
 		})(i);
 	}
