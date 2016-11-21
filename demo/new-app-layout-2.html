@@ -24,6 +24,7 @@
 		z-index: 1;
 	}
 	.header_button {
+		position: relative;
 		flex: 0;
 		flex-basis: 20px;
 		line-height: 45px;
@@ -80,7 +81,6 @@
 	}
 
 	.search--search_term {
-		position: relative;
 		font-size: 170%;
 		background-color: #56575b;
 		padding: 0 20px;
@@ -201,7 +201,6 @@
 
 	.reference--chapter_arrow,
 	.reference--reference_text {
-		position: relative;
 		background: transparent;
 		padding: 0 15px;
 	}
@@ -226,6 +225,116 @@
 		width: 70%;
 		left: 15%;
 	}
+
+
+	.menu_parent.togglable.active .header_menu,
+	.menu_parent:hover .header_menu {
+		opacity: 1;
+		pointer-events: all;
+		transform: translateY(0);
+	}
+	.header_menu::before {
+		content: "";
+		top: -6px;
+		left: 0;
+		position: absolute;
+		width: 50px;
+		height: 7px;
+		background: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSI2LjMiPjxwYXRoIGZpbGw9IiM5ZWEwYWIiIGQ9Ik0wIDYuM0wxMi41IDAgMjUgNi4zeiIvPjwvc3ZnPg==") center no-repeat;
+	}
+	.header_menu {
+		position: absolute;
+		top: 100%;
+		transition: opacity 150ms ease, transform 150ms ease;
+		display: table;
+		padding: 5px 1px;
+		background-color: #9ea0ab;
+	}
+	.menu_item {
+		display: table-row;
+		background-color: #9ea0ab;
+		line-height: 30px;
+		font-size: 13px;
+		text-align: left;
+	}
+	.menu_item:hover {
+		background-color: #767c92;
+	}
+	.menu_key {
+		display: table-cell;
+		padding: 0 10px;
+	}
+	.menu_value {
+		display: table-cell;
+		padding: 0 10px;
+		color: #d1d7e3;
+		font-weight: normal;
+	}
+	.header_menu.right,
+	.header_menu.right::before {
+		left: auto;
+		right: 0;
+	}
+	.header_menu.five_fifty {
+		left: calc(-310px + 50%);
+		width: 600px;
+		padding: 10px;
+	}
+	.header_menu.five_fifty::before {
+		left: calc(50% - 25px);
+	}
+
+	.menu_parent.togglable .header_menu,
+	.header_menu {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(5px);
+	}
+
+
+	.menu_grid {
+		display: table;
+		width: 100%;
+		border-spacing: 5px;
+	}
+	.grid_row {
+		display: table-row;
+	}
+	.grid_cell {
+		position: relative;
+		display: table-cell;
+		width: 50px;
+		height: 50px;
+		padding: 5px;
+		background-color: #d1d6e3;
+		overflow: hidden;
+	}
+	.grid_cell:hover {
+		background-color: #b7c2d9;
+	}
+	.grid_cell::after {
+		background-color: #767c92;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 5px;
+		content: "";
+		transform: translateY(5px);
+		transition: transform 150ms ease;
+	}
+	.grid_cell:hover::after {
+		transform: translateY(0);
+	}
+	.grid_cell.active {
+		background-color: #b7c2d9;
+	}
+	.grid_cell.active::after {
+		transform: translateY(5px);
+	}
+
+
+
 
 	.information_panel {
 		position: fixed;
@@ -262,31 +371,30 @@
 		width: 130px;
 		display: table-cell;
 		padding: 0 2px 0 12px;
-		vertical-align:middle;
 	}
 	.morph_value {
 		display: table-cell;
 		padding: 8px 12px 6px 2px;
-		line-height: 15px;
+		line-height: 16px;
 	}
 	.morph_value.hebrew {
 		font-family: "Ezra SIL";
-		vertical-align:middle;;
 	}
 	.create_term {
 		border-radius: 5px;
-		background-color: #56575b;
+		background-color: #9ea0ab;
 		color: #eee;
 		text-align: center;
 		font-weight: bold;
-		padding: 5px;
+		padding: 10px;
 		cursor: pointer;
 		margin: 10px 10px 0 5px;
 		text-transform: uppercase;
 		font-size: 80%;
+		line-height: 110%;
 	}
 	.create_term:hover {
-		background-color: #3c3d40;
+		background-color: #767c92;
 		color: #fff;
 	}
 
@@ -315,23 +423,103 @@
 			<div class="header_button search--search_term">בצר<div class="search--remove_search_term">remove</div></div>
 			<div class="header_button search--search_term">ו<div class="search--remove_search_term">remove</div></div>
 			<div class="header_button search--search_term">נחלה<div class="search--remove_search_term">remove</div></div>
-			<div class="header_button search--search_term">בצר<div class="search--remove_search_term">remove</div></div>
-			<div class="header_button search--search_term">ו<div class="search--remove_search_term">remove</div></div>
-			<div class="header_button search--search_term">נחלה<div class="search--remove_search_term">remove</div></div>
-			<div class="header_button search--search_term">בצר<div class="search--remove_search_term">remove</div></div>
-			<div class="header_button search--search_term">ו<div class="search--remove_search_term">remove</div></div>
-			<div class="header_button search--search_term">נחלה<div class="search--remove_search_term">remove</div></div>
 			<div class="header_button search--do_search"></div>
-			<div class="header_button search--search_settings"></div>
+			<div class="header_button search--search_settings menu_parent">
+				<div class="header_menu">
+					<div class="menu_item">
+						<span class="menu_key">Results</span>
+						<span class="menu_value">Collocations</span>
+					</div>
+					<div class="menu_item">
+						<span class="menu_key">Range</span>
+						<span class="menu_value">Clause</span>
+					</div>
+					<div class="menu_item">
+						<span class="menu_key">Filter</span>
+						<span class="menu_value">None</span>
+					</div>
+				</div>
+			</div>
 			<div class="header_spacer"></div>
 		</div>
 		<div class="header_reference_holder">
 			<div class="header_spacer"></div>
 			<div class="header_button reference--chapter_arrow">«</div>
-			<div class="header_button reference--reference_text">PSALM&nbsp;144</div>
+			<div class="header_button reference--reference_text menu_parent togglable">PSALM&nbsp;144
+				<div class="header_menu five_fifty">
+					<div class="menu_grid">
+						<div class="grid_row">
+							<span class="grid_cell">Gen</span>
+							<span class="grid_cell">Exod</span>
+							<span class="grid_cell">Lev</span>
+							<span class="grid_cell">Num</span>
+							<span class="grid_cell">Deut</span>
+							<span class="grid_cell">Josh</span>
+							<span class="grid_cell">Judg</span>
+						</div>
+						<div class="grid_row">
+							<span class="grid_cell">1 Sam</span>
+							<span class="grid_cell">2 Sam</span>
+							<span class="grid_cell">1 Kgs</span>
+							<span class="grid_cell">2 Kgs</span>
+							<span class="grid_cell">Isa</span>
+							<span class="grid_cell">Jer</span>
+							<span class="grid_cell">Ezek</span>
+						</div>
+						<div class="grid_row">
+							<span class="grid_cell">Hos</span>
+							<span class="grid_cell">Joel</span>
+							<span class="grid_cell">Amos</span>
+							<span class="grid_cell">Obad</span>
+							<span class="grid_cell">Jonah</span>
+							<span class="grid_cell">Mic</span>
+							<span class="grid_cell">Nah</span>
+						</div>
+						<div class="grid_row">
+							<span class="grid_cell">Hab</span>
+							<span class="grid_cell">Zeph</span>
+							<span class="grid_cell">Hag</span>
+							<span class="grid_cell">Zech</span>
+							<span class="grid_cell">Mal</span>
+							<span class="grid_cell active">Ps</span>
+							<span class="grid_cell">Job</span>
+						</div>
+						<div class="grid_row">
+							<span class="grid_cell">Prov</span>
+							<span class="grid_cell">Ruth</span>
+							<span class="grid_cell">Song</span>
+							<span class="grid_cell">Eccl</span>
+							<span class="grid_cell">Lam</span>
+							<span class="grid_cell">Esth</span>
+							<span class="grid_cell">Dan</span>
+						</div>
+						<div class="grid_row">
+							<span class="grid_cell">Ezra</span>
+							<span class="grid_cell">Neh</span>
+							<span class="grid_cell">1 Chr</span>
+							<span class="grid_cell">2 Chr</span>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="header_button reference--chapter_arrow">»</div>
 			<div class="header_spacer"></div>
-			<div class="header_button header--settings"></div>
+			<div class="header_button header--settings menu_parent">
+				<div class="header_menu right">
+					<div class="menu_item">
+						<span class="menu_key">Font&nbsp;Size</span>
+						<span class="menu_value">Normal</span>
+					</div>
+					<div class="menu_item">
+						<span class="menu_key">Font&nbsp;Family</span>
+						<span class="menu_value">Ezra&nbsp;SIL</span>
+					</div>
+					<div class="menu_item">
+						<span class="menu_key">Morphological&nbsp;Data</span>
+						<span class="menu_value">[options]</span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="panel information_panel">
@@ -359,12 +547,12 @@
 				<span class="morph_value">2nd</span>
 			</div>
 			<div class="morph_data">
-				<span class="morph_key">Number</span>
-				<span class="morph_value">sg</span>
-			</div>
-			<div class="morph_data">
 				<span class="morph_key">Gender</span>
 				<span class="morph_value">Masc</span>
+			</div>
+			<div class="morph_data">
+				<span class="morph_key">Number</span>
+				<span class="morph_value">sg</span>
 			</div>
 			<div class="morph_data">
 				<span class="morph_key">Has Suffix</span>
@@ -409,7 +597,7 @@
 			});
 		})(i);
 	}
-	var inputs = document.querySelectorAll(".morph_data")
+	var inputs = document.querySelectorAll(".morph_data, .togglable")
 	for (i = 0; i < inputs.length; i++) {
 		(function(i) {
 			inputs[i].addEventListener('click', function() {
