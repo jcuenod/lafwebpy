@@ -114,20 +114,20 @@
 		position: absolute;
 		left: 0;
 		right: 0;
+		bottom: -20px;
 		height: 20px;
 		line-height: 18px;
 		margin: 0;
 		background-color: #fb5f5f;
 		color: hsl(0, 95%, 95%);
 		font-size: 8pt;
-		transform: scale(1, 0) translateY(-15px);
-		transition: transform 150ms ease, opacity 200ms ease;
+		transform: scale(1, 0);
+		transform-origin: top;
+		transition: transform 150ms ease;
 		padding: 0;
-		opacity: 1;
 	}
 	.search--search_term:hover .search--remove_search_term {
-		transform: scale(1) translateY(15px);
-		opacity: 1;
+		transform: scale(1);
 	}
 	.search--remove_search_term:hover {
 		background-color: hsl(0, 95%, 50%);
@@ -135,7 +135,7 @@
 	}
 
 	.search--search_term.active .search--remove_search_term {
-		opacity: 0;
+		transform: scale(1, 0);
 		pointer-events: none;
 	}
 
@@ -257,8 +257,23 @@
 		font-size: 13px;
 		text-align: left;
 	}
+	.menu_item.active,
 	.menu_item:hover {
 		background-color: #767c92;
+	}
+	.submenu {
+		display: none;
+		overflow: hidden;
+		height: 0;
+		margin: 0;
+		/*transform: scale(1, 0);*/
+		/*transform-origin: top;*/
+		transition: transform 150ms ease, height 150ms ease;
+	}
+	.menu_item.active + .submenu {
+		display: table-row;
+		height: 100%;
+		/*transform: scale(1, 1);*/
 	}
 	.menu_key {
 		display: table-cell;
@@ -430,6 +445,10 @@
 						<span class="menu_key">Results</span>
 						<span class="menu_value">Collocations</span>
 					</div>
+					<div class="submenu">
+						<div class="menu_item">Normal</div>
+						<div class="menu_item">Collocations</div>
+					</div>
 					<div class="menu_item">
 						<span class="menu_key">Range</span>
 						<span class="menu_value">Clause</span>
@@ -597,7 +616,7 @@
 			});
 		})(i);
 	}
-	var inputs = document.querySelectorAll(".morph_data, .togglable")
+	var inputs = document.querySelectorAll(".morph_data, .togglable, .menu_item")
 	for (i = 0; i < inputs.length; i++) {
 		(function(i) {
 			inputs[i].addEventListener('click', function() {
