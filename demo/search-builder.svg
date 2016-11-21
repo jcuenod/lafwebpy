@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="351.89603"
-     inkscape:cy="1294.1518"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="519.39257"
+     inkscape:cy="-277.24749"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g4614"
      showgrid="false"
      units="px"
      inkscape:window-width="1366"
@@ -2270,6 +2270,212 @@
          id="circle7588"
          d="m 409.35539,-651.84182 a 2.3333333,2.3333333 0 0 1 -2.33333,2.33333 2.3333333,2.3333333 0 0 1 -2.33333,-2.33333 2.3333333,2.3333333 0 0 1 2.33333,-2.33333 2.3333333,2.3333333 0 0 1 2.33333,2.33333 z"
          style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <rect
+       y="1152.3622"
+       x="34"
+       height="50"
+       width="980"
+       id="rect4510"
+       style="opacity:1;fill:#d1d6e3;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <g
+       id="g4512"
+       transform="translate(-37.428574,1106.4261)">
+      <rect
+         style="opacity:1;fill:#5f97fb;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4514"
+         width="50"
+         height="50"
+         x="91.428574"
+         y="45.936077" />
+      <path
+         inkscape:connector-curvature="0"
+         style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 115.06491,60.784767 c -2.27274,0 -4.54525,0.867241 -6.27929,2.601282 -3.4681,3.468071 -3.4681,9.090508 0,12.558574 3.03328,3.03331 7.71503,3.412111 11.16163,1.139362 l 3.68032,3.680325 c 0.43076,0.430769 1.12396,0.430769 1.55474,0 l 1.16721,-1.164895 c 0.43077,-0.430769 0.43077,-1.123965 0,-1.554745 l -3.72673,-3.729049 c 2.10861,-3.42255 1.68799,-7.96301 -1.27859,-10.929572 -1.73405,-1.734041 -4.00656,-2.601282 -6.27929,-2.601282 z m 0,3.448265 c 1.39049,2.85e-4 2.77974,0.530724 3.84043,1.591874 2.12086,2.121634 2.12086,5.55923 0,7.68086 -2.12139,2.122264 -5.56097,2.123702 -7.68318,0.0024 -2.12284,-2.121962 -2.12284,-5.563526 0,-7.685506 1.0611,-1.06071 2.45226,-1.589818 3.84275,-1.589544 z"
+         id="path4516" />
+    </g>
+    <rect
+       y="1202.3622"
+       x="34"
+       height="648.57141"
+       width="250"
+       id="rect4518"
+       style="opacity:1;fill:#ececec;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <g
+       id="g4520"
+       transform="translate(-118.85715,668.57141)">
+      <path
+         sodipodi:nodetypes="cccccccc"
+         inkscape:connector-curvature="0"
+         id="path4522"
+         d="m 152.85715,483.79074 20,0 0,12.5 7.83176,12.5 -7.83176,12.5 0,12.5 -20,0 z"
+         style="opacity:1;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4524"
+         y="512.85657"
+         x="157.16479"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.97014618px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="512.85657"
+           x="157.16479"
+           id="tspan4526"
+           sodipodi:role="line">+</tspan></text>
+    </g>
+    <g
+       transform="translate(34,876.36752)"
+       id="g4528">
+      <rect
+         y="275.99463"
+         x="523.25903"
+         height="50"
+         width="185.21194"
+         id="rect4530"
+         style="opacity:1;fill:#56575b;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="565.20782"
+         y="310.39557"
+         id="text4532"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4534"
+           x="565.20782"
+           y="310.39557"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed,  Bold Condensed';letter-spacing:1.24129605">PSALM 144</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text4536"
+         y="308.5849"
+         x="687.20782"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed,  Bold Condensed';letter-spacing:1.24129605"
+           y="308.5849"
+           x="687.20782"
+           id="tspan4538"
+           sodipodi:role="line">»</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="532.20782"
+         y="308.5849"
+         id="text4540"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4542"
+           x="532.20782"
+           y="308.5849"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed,  Bold Condensed';letter-spacing:1.24129605">«</tspan></text>
+    </g>
+    <rect
+       style="opacity:1;fill:#f9f9f9;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4544"
+       width="730"
+       height="648.57098"
+       x="284"
+       y="1202.3622" />
+    <path
+       style="fill:#5f97fb;fill-opacity:1;fill-rule:evenodd;stroke:#ececec;stroke-width:0.97866124px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 650.53824,1241.4072 0,609.526"
+       id="path4546"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="53.786457"
+       y="1276.6774"
+       id="text4532-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4534-6"
+         x="53.786457"
+         y="1276.6774"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';letter-spacing:1.24129605;fill:#767c92;fill-opacity:1">PSALM 144</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4566"
+       y="1276.6774"
+       x="621.2207"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';text-align:end;letter-spacing:1.24129605;text-anchor:end;fill:#767c92;fill-opacity:1"
+         y="1276.6774"
+         x="622.46198"
+         id="tspan4568"
+         sodipodi:role="line">Bunch of hebrew in terrible font</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';text-align:end;letter-spacing:1.24129605;text-anchor:end;fill:#767c92;fill-opacity:1"
+         y="1303.2407"
+         x="622.46198"
+         sodipodi:role="line"
+         id="tspan4574"><tspan
+   style="fill:#3c3d40;fill-opacity:1"
+   id="tspan4580">that is </tspan><tspan
+   id="tspan4596"
+   style="fill:#5f97fb;fill-opacity:1">nearly</tspan><tspan
+   id="tspan4594"
+   style="fill:#3c3d40;fill-opacity:1"> unreadable</tspan> with</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';text-align:end;letter-spacing:1.24129605;text-anchor:end;fill:#767c92;fill-opacity:1"
+         y="1329.804"
+         x="622.46198"
+         sodipodi:role="line"
+         id="tspan4576">whatever resolution you try.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="678.96936"
+       y="1276.6774"
+       id="text4570"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4572"
+         x="678.96936"
+         y="1276.6774"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';letter-spacing:1.24129605;fill:#767c92;fill-opacity:1">Bunch of terrible English that is</tspan><tspan
+         sodipodi:role="line"
+         x="678.96936"
+         y="1303.2407"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';letter-spacing:1.24129605;fill:#767c92;fill-opacity:1"
+         id="tspan4578">similarly miserable.</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4600"
+       y="1233.6652"
+       x="510.3764"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';letter-spacing:1.24129605;fill:#767c92;fill-opacity:1"
+         y="1233.6652"
+         x="510.3764"
+         id="tspan4602"
+         sodipodi:role="line">Search Results</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.25065041px;line-height:125%;font-family:'Ezra SIL SR';-inkscape-font-specification:'Ezra SIL SR';letter-spacing:0px;word-spacing:0px;fill:#5f97fb;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="654.62616"
+       y="1233.6652"
+       id="text4604"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4606"
+         x="654.62616"
+         y="1233.6652"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:condensed;font-family:'Open Sans Condensed';-inkscape-font-specification:'Open Sans Condensed, Bold Condensed';letter-spacing:1.24129605;fill:#5f97fb;fill-opacity:1">115 clauses</tspan></text>
+    <circle
+       style="opacity:1;fill:#b7c2d9;fill-opacity:1;stroke:none;stroke-width:7.69650507;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4608"
+       cx="983.58551"
+       cy="1229.8459"
+       r="17.415203" />
+    <g
+       id="g4614"
+       transform="translate(0.08551025,1.7337473)">
+      <path
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ececec;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         d="m 976.79894,1221.2087 a 1.0344164,1.0344164 0 0 0 -0.70166,1.8222 l 5.82878,5.0826 -5.82878,5.0814 a 1.0344164,1.0344164 0 1 0 1.36023,1.5582 l 6.04292,-5.2685 6.04292,5.2685 a 1.0344164,1.0344164 0 1 0 1.36023,-1.5582 l -5.82879,-5.0814 5.82879,-5.0826 a 1.0344164,1.0344164 0 0 0 -0.62894,-1.8222 1.0344164,1.0344164 0 0 0 -0.73129,0.264 l -6.04292,5.2685 -6.04292,-5.2685 a 1.0344164,1.0344164 0 0 0 -0.65857,-0.264 z"
+         id="path4610"
+         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
