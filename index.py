@@ -120,7 +120,7 @@ functions = {
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
-	"gloss": lambda node, value : F.gloss.v(node) == value
+	"gloss": lambda node, value : value in F.gloss.v(node)
 }
 def test_node_with_query(query, node):
 	ret = True
