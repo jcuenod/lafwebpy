@@ -18,7 +18,7 @@ api = TF.load('''
 	g_prs_utf8 g_uvf_utf8
 	det book chapter verse
 
-	trailer_utf8 g_word_utf8
+	trailer_utf8 g_word_utf8 lex
 ''')
 api.makeAvailableIn(globals())
 
@@ -28,10 +28,10 @@ api.makeAvailableIn(globals())
 verse_node_index = defaultdict(lambda : defaultdict(dict))
 # word_node_list = []
 
-print (" -- precomputing node data --")
-for n in F.otype.s('verse'):
-	verse_node_index[F.book.v(n)][int(F.chapter.v(n))][int(F.verse.v(n))] = n
-print (" -- done precomputing --")
+# print (" -- precomputing node data --")
+# for n in F.otype.s('verse'):
+# 	verse_node_index[F.book.v(n)][int(F.chapter.v(n))][int(F.verse.v(n))] = n
+# print (" -- done precomputing --")
 
 db = sqlite3.connect("parallel_texts.sqlite")
 query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
@@ -77,11 +77,11 @@ def api_word_data():
 		"vt": F.vt.v(node), # vt = verbal tense
 		"vs": F.vs.v(node), # vs = verbal stem
 		"st": F.st.v(node), # construct/absolute/emphatic
-		"is_definite": F.det.v(L.u(node, otype='phrase_atom')),
+		"is_definite": F.det.v(L.u(node, otype='phrase_atom')[0]),
 		"g_prs_utf8": F.g_prs_utf8.v(node),
 		"g_uvf_utf8": F.g_uvf_utf8.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
-		"gloss": F.gloss.v(node)
+		"gloss": F.gloss.v(L.u(node, otype='lex')[0])
 	}
 	r = remove_na_and_empty_and_unknown(r);
 	response.content_type = 'application/json'
@@ -91,8 +91,7 @@ def api_word_data():
 
 ### SEARCH API ###
 
-def key_from_passage(a):
-	ptup = re.findall(r"(.*) (\d+):(\d+)", a["passage"])[0]
+def key_from_passage(ptup):
 	bindex = book_index(ptup[0])
 	r = bindex * 1000000 + int(ptup[1]) * 1000 + int(ptup[2])
 	return r
@@ -112,7 +111,7 @@ functions = {
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
-	"gloss": lambda node, value : value in F.gloss.v(node)
+	"gloss": lambda node, value : value in F.gloss.v(L.u(node, otype='lex')[0])
 }
 def test_node_with_query(query, node):
 	ret = True
@@ -121,13 +120,15 @@ def test_node_with_query(query, node):
 	return ret
 
 def passage_tuple(node):
-	reference = T.passage(node)
-	p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
+	reference = T.sectionFromNode(node)
+	last_reference = T.sectionFromNode(node, lastSlot=True)
+	# p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
 	return {
-		"book": p_tuple.group(1),
-		"chapter": int(p_tuple.group(2)),
-		"verse_lower": int(p_tuple.group(3)),
-		"verse_upper": int(p_tuple.group(3) if p_tuple.group(5) is None else p_tuple.group(5))
+		"book": reference[0], #p_tuple.group(1),
+		"chapter": reference[1],  # p_tuple.group(2)),
+		"verse_lower": reference[2],  # p_tuple.group(3)),
+		# "verse_upper": int(p_tuple.group(3) if p_tuple.group(5) is None else p_tuple.group(5))
+		"verse_upper": last_reference[2] if reference[2] != last_reference[2] else reference[2]
 	}
 
 def get_p_text(book, chapter, verse):
@@ -141,14 +142,12 @@ def get_p_text(book, chapter, verse):
 		return ""
 	return remove_tags(translated_verse)
 
-def get_words_from_verse_node_index(book_name, chapter, verse):
-	try:
-		return L.d('word', verse_node_index[book_name][chapter][verse])
-	except:
-		print(book_name)
-		print(chapter)
-		print(verse)
-		return []
+# def get_words_from_verse_node_index(book_name, chapter, verse):
+# 	try:
+# 		return L.d('word', verse_node_index[book_name][chapter][verse])
+# 	except:
+# 		print(book_name, chapter, verse)
+# 		return []
 
 def get_parallel_text_from_node(node):
 	p_ret = ""
@@ -157,19 +156,33 @@ def get_parallel_text_from_node(node):
 		p_ret += get_p_text(p["book"], p["chapter"], verse)
 	return p_ret
 
-def get_words_nodes_of_verse_range_from_node(node):
-	words = []
-	p = passage_tuple(node)
-	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
-		words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
-	return T.words(words, fmt='ha').replace('\n','')
+# def get_words_nodes_of_verse_range_from_node(node):
+# 	words = []
+# 	p = passage_tuple(node)
+# 	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
+# 		words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
+# 	return T.words(words, fmt='ha').replace('\n','')
 
 def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 	words = []
 	p = passage_tuple(node)
-	found_word_group = L.d('word', node)
-	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
-		words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
+	found_word_group = L.d(node, otype='word')
+
+	# broad_node = T.nodeFromSection(T.sectionFromNode(node))
+	verse = L.u(node, otype='verse')
+	if len(verse) == 1:
+		words = L.d(verse[0], otype='word')
+	else:
+		for vs in L.d(node, otype='verse'):
+			words += L.d(vs, otype='word')
+
+
+	# for vs in L.u(node, otype='verse'):
+	# 	words += L.d(vs, otype='word')
+
+	# for vs in range(p["verse_lower"], p["verse_upper"] + 1):
+		# words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
+		# words += T.
 
 	ret_array = []
 	for w in words:
@@ -187,22 +200,23 @@ def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 			})
 		elif ret_array[-1]["significance"] is not word_significance:
 			if len(ret_array) > 0:
-				ret_array[-1]["text"] = T.words(ret_array[-1]["text"], fmt='ha').replace('\n','')
+				ret_array[-1]["text"] = T.text(ret_array[-1]["text"]).replace('\n','')
 			ret_array.append({
 				"significance": word_significance,
 				"text": []
 			})
 		ret_array[-1]["text"].append(w)
 	if len(ret_array) > 0:
-		ret_array[-1]["text"] = T.words(ret_array[-1]["text"], fmt='ha').replace('\n','')
+		ret_array[-1]["text"] = T.text(ret_array[-1]["text"]).replace('\n','')
 	return ret_array
 
-def passage_abbreviation(reference):
-	p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
-	ret = book_abbreviation(p_tuple.group(1)) + " " + p_tuple.group(2) + ":" + p_tuple.group(3)
-	if p_tuple.group(5) is not None:
-		ret += "-" + p_tuple.group(5)
-	return ret
+# def passage_abbreviation(reference):
+# 	# p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
+# 	# ret = book_abbreviation(p_tuple.group(1)) + " " + p_tuple.group(2) + ":" + p_tuple.group(3)
+# 	# if p_tuple.group(5) is not None:
+# 	# 	ret += "-" + p_tuple.group(5)
+# 	ret = str(reference)
+# 	return ret
 
 @post('/api/search')
 def api_search():
@@ -216,10 +230,10 @@ def api_search():
 
 	word_group_with_match = [[] for i in range(len(query))]
 	found_words = []
-	for n in word_node_list:
+	for n in F.otype.s('word'):
 		for q_index, q in enumerate(query):
 			if test_node_with_query(q, n):
-				search_range_node = L.u(search_range, n)
+				search_range_node = L.u(n, otype=search_range)[0]
 				word_group_with_match[q_index].append(search_range_node)
 				found_words.append({
 					"search_range_node": search_range_node,
@@ -244,12 +258,15 @@ def api_search():
 		p_text = get_parallel_text_from_node(r)
 
 		retval.append({
-			"passage": passage_abbreviation(T.passage(r)),
+			"passage": str(T.sectionFromNode(r)),
+			"node": r,
+			# "passage": passage_abbreviation(str(T.sectionFromNode(r))),
 			"clause": clause_text,
 			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
 			"english": p_text
 		})
-	retval_sorted = sorted(retval, key=lambda x: key_from_passage(x))
+	# retval_sorted = sorted(retval, key=lambda x: key_from_passage(x["passage"]))
+	retval_sorted = sorted(retval, key=lambda r: sortKey(r["node"]))
 
 	response.content_type = 'application/json'
 	return json.dumps(retval_sorted)
@@ -285,14 +302,14 @@ def api_collocations():
 	for n in word_node_list:
 		for q_index, q in enumerate(search_query):
 			if test_node_with_query(q, n):
-				search_range_node = L.u(search_range, n)
+				search_range_node = L.u(n, otype=search_range)[0]
 				word_group_with_match[q_index].append(search_range_node)
 				break
 
 	intersection = list(set.intersection(*map(set, word_group_with_match)))
 	word_list = []
 	for n in intersection:
-		word_list += L.d("word", n)
+		word_list += L.d(n, otype='word')
 
 	word_tally = {}
 	for word in word_list:
@@ -326,13 +343,12 @@ def api_book_chapter():
 	print(json_response)
 	book = generous_name(json_response["book"])
 	chapter = int(json_response["chapter"]) # This needs to be a string for the if...
-	print (book)
-	print (chapter)
-	book_chapter_node = T.nodeFromSection((book, chapter))
-	print (book_chapter_node)
+	book_chapter_node = T.nodeFromSection((book, chapter), lang='la')
 	ret = []
-	for w in L.d(book_chapter_node, otype='word'):
-		ret.append({ "verse": F.verse.v(w), "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
+	for v in L.d(book_chapter_node, otype='verse'):
+		verse = F.verse.v(v)
+		for w in L.d(v, otype='word'):
+			ret.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
 	response.content_type = 'application/json'
 	return json.dumps(ret)
 
