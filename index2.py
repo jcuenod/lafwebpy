@@ -81,7 +81,8 @@ def api_word_data():
 		"g_prs_utf8": F.g_prs_utf8.v(node),
 		"g_uvf_utf8": F.g_uvf_utf8.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
-		"gloss": F.gloss.v(L.u(node, otype='lex')[0])
+		"gloss": F.gloss.v(L.u(node, otype='lex')[0]),
+		"invert": "t",
 	}
 	r = remove_na_and_empty_and_unknown(r);
 	response.content_type = 'application/json'
@@ -111,7 +112,8 @@ functions = {
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
-	"gloss": lambda node, value : value in F.gloss.v(L.u(node, otype='lex')[0])
+	"gloss": lambda node, value : value in F.gloss.v(L.u(node, otype='lex')[0]),
+	"invert": lambda node, value : True
 }
 def test_node_with_query(query, node):
 	ret = True
@@ -234,6 +236,7 @@ def api_search():
 	if search_range not in search_ranges:
 		search_range = "clause"
 
+	word_groups_to_exclude = []
 	word_group_with_match = [[] for i in range(len(query))]
 	found_words = []
 	for n in F.otype.s('word'):
@@ -247,7 +250,17 @@ def api_search():
 				})
 				break
 
-	intersection = list(set.intersection(*map(set, word_group_with_match)))
+	words_groups_to_intersect = []
+	words_groups_to_filter = []
+	for q_index, q in enumerate(query):
+		if "invert" in q and q["invert"] == "t":
+			words_groups_to_filter += word_group_with_match[q_index]
+		else:
+			words_groups_to_intersect.append(word_group_with_match[q_index])
+
+
+	intersection_to_filter = list(set.intersection(*map(set, words_groups_to_intersect)))
+	intersection = list(filter(lambda x: x not in words_groups_to_filter, intersection_to_filter))
 	print (str(len(intersection)) + " results")
 
 	# Truncate array if too long
