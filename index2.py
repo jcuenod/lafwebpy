@@ -210,6 +210,12 @@ def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 		ret_array[-1]["text"] = T.text(ret_array[-1]["text"]).replace('\n','')
 	return ret_array
 
+def passage_abbreviation(node):
+	first_node = T.sectionFromNode(node, lang='sbl')
+	last_node = T.sectionFromNode(node, lastSlot=True, lang='sbl')
+	suffix = "‑" + str(last_node[2]) if first_node[2] != last_node[2] else ""
+	return "{0} {1:d}:{2:d}".format(*first_node) + suffix
+
 # def passage_abbreviation(reference):
 # 	# p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
 # 	# ret = book_abbreviation(p_tuple.group(1)) + " " + p_tuple.group(2) + ":" + p_tuple.group(3)
@@ -258,8 +264,9 @@ def api_search():
 		p_text = get_parallel_text_from_node(r)
 
 		retval.append({
-			"passage": str(T.sectionFromNode(r)),
+			"passage": passage_abbreviation(r),
 			"node": r,
+
 			# "passage": passage_abbreviation(str(T.sectionFromNode(r))),
 			"clause": clause_text,
 			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
