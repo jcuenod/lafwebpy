@@ -16,7 +16,7 @@ api = TF.load('''
 	language gloss
 	chapter verse
 	g_prs_utf8 g_uvf_utf8
-	det book chapter verse
+	det book chapter verse sdbh lxxlexeme
 
 	trailer_utf8 g_word_utf8 lex
 ''')
@@ -69,7 +69,9 @@ def api_word_data():
 	node = int(json_response["word_id"])
 	r = {
 		"tricons": F.lex_utf8.v(node).replace('=', '').replace('/','').replace('[',''),
-		"lex_utf8": F.lex_utf8.v(node),
+		"sdbh": F.sdbh.v(node),
+		"lex": F.lex.v(node),
+		"lxxlexeme": F.lxxlexeme.v(node),
 		"sp": F.sp.v(node),
 		"ps": F.ps.v(node),
 		"nu": F.nu.v(node),
@@ -105,7 +107,9 @@ functions = {
 	"vt": lambda node, value : F.vt.v(node) == value,
 	"vs": lambda node, value : F.vs.v(node) == value,
 	"st": lambda node, value : F.st.v(node) == value,
-	"lex_utf8": lambda node, value : F.lex_utf8.v(node) == value,
+	"sdbh": lambda node, value : F.sdbh.v(node) == value,
+	"lex": lambda node, value : F.lex.v(node) == value,
+	"lxxlexeme": lambda node, value : F.lxxlexeme.v(node) == value,
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
 	"is_definite": lambda node, value : F.det.v(L.u("phrase", node)) == value,
@@ -319,7 +323,7 @@ def api_collocations():
 	search_query = json_response["query"]
 
 	word_group_with_match = [[] for i in range(len(search_query))]
-	for n in word_node_list:
+	for n in F.otype.s('word'):
 		for q_index, q in enumerate(search_query):
 			if test_node_with_query(q, n):
 				search_range_node = L.u(n, otype=search_range)[0]
