@@ -8,7 +8,7 @@ from lxml import etree
 
 from tf.fabric import Fabric
 
-TF = Fabric(locations='/home/jcuenod/Programming/text-fabric-data', modules='hebrew/etcbc4c')
+TF = Fabric(locations='../Programming/text-fabric-data', modules='hebrew/etcbc4c')
 api = TF.load('''
 	sp nu gn ps vt vs st
 	otype
