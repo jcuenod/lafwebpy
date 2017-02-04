@@ -1,4 +1,5 @@
 from sys import getsizeof
+from functools import reduce
 import sqlite3, sys, collections, re, json
 from collections import defaultdict
 from io import TextIOWrapper
@@ -8,7 +9,7 @@ from lxml import etree
 
 from tf.fabric import Fabric
 
-TF = Fabric(locations='../Programming/text-fabric-data', modules='hebrew/etcbc4c')
+TF = Fabric(locations='../text-fabric-data', modules='hebrew/etcbc4c')
 api = TF.load('''
 	sp nu gn ps vt vs st
 	otype
@@ -62,11 +63,7 @@ def remove_na_and_empty_and_unknown(list_to_reduce):
 		del templist[key]
 	return templist
 
-@post('/api/word_data')
-def api_word_data():
-	json_response = json.load(TextIOWrapper(request.body))
-	print(json_response)
-	node = int(json_response["word_id"])
+def word_data(node):
 	r = {
 		"tricons": F.lex_utf8.v(node).replace('=', '').replace('/','').replace('[',''),
 		"sdbh": F.sdbh.v(node),
@@ -86,9 +83,16 @@ def api_word_data():
 		"gloss": F.gloss.v(L.u(node, otype='lex')[0]),
 		"invert": "t",
 	}
-	r = remove_na_and_empty_and_unknown(r);
+	return remove_na_and_empty_and_unknown(r);
+
+@post('/api/word_data')
+def api_word_data():
+	json_response = json.load(TextIOWrapper(request.body))
+	print(json_response)
+	node = int(json_response["word_id"])
+	wdata = word_data(node)
 	response.content_type = 'application/json'
-	return json.dumps(r)
+	return json.dumps(wdata)
 
 
 
@@ -119,11 +123,13 @@ functions = {
 	"gloss": lambda node, value : value in F.gloss.v(L.u(node, otype='lex')[0]),
 	"invert": lambda node, value : True
 }
-def test_node_with_query(query, node):
+def test_node_with_query(node, query):
 	ret = True
 	for key in query:
 		ret &= functions[key](node, query[key])
-	return ret
+		if not ret:
+			return False
+	return True
 
 def passage_tuple(node):
 	reference = T.sectionFromNode(node)
@@ -245,7 +251,7 @@ def api_search():
 	found_words = []
 	for n in F.otype.s('word'):
 		for q_index, q in enumerate(query):
-			if test_node_with_query(q, n):
+			if test_node_with_query(n, q):
 				search_range_node = L.u(n, otype=search_range)[0]
 				word_group_with_match[q_index].append(search_range_node)
 				found_words.append({
@@ -325,7 +331,7 @@ def api_collocations():
 	word_group_with_match = [[] for i in range(len(search_query))]
 	for n in F.otype.s('word'):
 		for q_index, q in enumerate(search_query):
-			if test_node_with_query(q, n):
+			if test_node_with_query(n, q):
 				search_range_node = L.u(n, otype=search_range)[0]
 				word_group_with_match[q_index].append(search_range_node)
 				break
@@ -360,6 +366,38 @@ def api_collocations():
 	response.content_type = 'application/json'
 	return json.dumps(word_tally_list_sorted)
 
+@post('/api/word_study')
+def api_word_study():
+	json_response = json.load(TextIOWrapper(request.body))
+	print(json_response)
+	query = json_response["query"]
+
+	column_list = []
+	results = []
+	for word in F.otype.s('word'):
+		if not reduce(lambda x, y: x and test_node_with_query(word, y), query, True):
+			continue
+		wd = word_data(word)
+		wd["ref"] = T.sectionFromNode(word, lang='sbl')
+		results.append(wd)
+		keys_to_add = list(wd.keys())
+		if len(column_list) > 0:
+			keys_to_add = set(keys_to_add) - set(map(lambda x: x["header"],column_list))
+		for k in keys_to_add:
+			column_list.append({
+				"header": k,
+				"accessor": k,
+			})
+
+	r = {
+		"truncated": False,
+		"search_results": {
+			"columns": column_list,
+			"rows": results
+		}
+	}
+	response.content_type = 'application/json'
+	return json.dumps(r)
 
 @post('/api/book_chapter')
 def api_book_chapter():
