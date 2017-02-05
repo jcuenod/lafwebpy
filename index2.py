@@ -405,13 +405,17 @@ def api_book_chapter():
 	print(json_response)
 	book = generous_name(json_response["book"])
 	chapter = int(json_response["chapter"]) # This needs to be a string for the if...
-	book_chapter_node = T.nodeFromSection((book, chapter), lang='la')
-	ret = []
+	book_chapter_node = T.nodeFromSection((book, chapter))
+	chapter_data = []
 	for v in L.d(book_chapter_node, otype='verse'):
 		verse = F.verse.v(v)
 		for w in L.d(v, otype='word'):
-			ret.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
+			chapter_data.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
 	response.content_type = 'application/json'
+	ret = {
+		"reference": { "book": book, "chapter": chapter },
+		"chapter_data": chapter_data
+	}
 	return json.dumps(ret)
 
 
