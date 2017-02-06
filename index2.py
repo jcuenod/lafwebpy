@@ -450,7 +450,7 @@ def enable_cors():
 	response.headers['Access-Control-Allow-Origin'] = '*'
 
 port_to_host_on = 80
-if len(sys.argv) > 0:
+if len(sys.argv) > 1:
 	if sys.argv[1].isdigit():
 		port_to_host_on = int(sys.argv[1])
 run(host='0.0.0.0', port=port_to_host_on, server='paste', debug=True)
