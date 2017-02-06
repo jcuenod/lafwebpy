@@ -378,7 +378,10 @@ def api_word_study():
 		if not reduce(lambda x, y: x and test_node_with_query(word, y), query, True):
 			continue
 		wd = word_data(word)
-		wd["ref"] = T.sectionFromNode(word, lang='sbl')
+		ref = T.sectionFromNode(word, lang='sbl')
+		wd["book"] = ref[0]
+		wd["ch"] = ref[1]
+		wd["v"] = ref[2]
 		results.append(wd)
 		keys_to_add = list(wd.keys())
 		if len(column_list) > 0:
