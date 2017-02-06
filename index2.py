@@ -35,7 +35,7 @@ verse_node_index = defaultdict(lambda : defaultdict(dict))
 # 	verse_node_index[F.book.v(n)][int(F.chapter.v(n))][int(F.verse.v(n))] = n
 # print (" -- done precomputing --")
 
-db = sqlite3.connect("parallel_texts.sqlite")
+db = sqlite3.connect("parallel_texts.sqlite", check_same_thread=False)
 query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
 
 
@@ -449,4 +449,8 @@ def root_page(book="Genesis", chapter="1"):
 def enable_cors():
 	response.headers['Access-Control-Allow-Origin'] = '*'
 
-run(host='0.0.0.0', port=8080, debug=True)
+port_to_host_on = 80
+if len(sys.argv) > 0:
+	if sys.argv[1].isdigit():
+		port_to_host_on = int(sys.argv[1])
+run(host='0.0.0.0', port=port_to_host_on, server='paste', debug=True)
