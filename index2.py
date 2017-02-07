@@ -247,7 +247,10 @@ def passage_abbreviation(node):
 def api_search():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
-	query = json_response["query"]
+	query = list(filter(lambda x: len(list(x.keys())) > 0, json_response["query"]))
+	if len(query) == 0:
+		response.content_type = 'application/json'
+		return json.dumps([])
 	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase"]
 	search_range = json_response["search_range"]
 	if search_range not in search_ranges:
