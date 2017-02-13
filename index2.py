@@ -20,7 +20,7 @@ api = TF.load('''
 	det book chapter verse sdbh lxxlexeme
 
 	trailer_utf8 g_word_utf8 lex
-	prs_gn prs_nu prs_ps
+	prs_gn prs_nu prs_ps g_cons_utf8
 ''')
 api.makeAvailableIn(globals())
 
@@ -80,6 +80,7 @@ def word_data(node):
 		"is_definite": F.det.v(L.u(node, otype='phrase_atom')[0]),
 		"g_prs_utf8": F.g_prs_utf8.v(node),
 		"g_uvf_utf8": F.g_uvf_utf8.v(node),
+		"g_cons_utf8": F.g_cons_utf8.v(node),
 		"prs_nu": F.prs_nu.v(node),
 		"prs_gn": F.prs_gn.v(node),
 		"prs_ps": F.prs_ps.v(node),
@@ -123,6 +124,7 @@ functions = {
 	"prs_ps": lambda node, value : F.prs_ps.v(node) == value,
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
+	"g_cons_utf8": lambda node, value : F.g_cons_utf8.v(node) == value,
 	"is_definite": lambda node, value : F.det.v(L.u("phrase", node)) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
