@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.46933127"
-     inkscape:cx="606.87246"
-     inkscape:cy="315.49307"
+     inkscape:zoom="0.93866254"
+     inkscape:cx="300.72847"
+     inkscape:cy="512.85966"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2417,6 +2417,57 @@
            x="92.105919"
            y="1018.9389"
            style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:'Raleway Heavy';fill:#5f97fb;fill-opacity:1;stroke-width:0.90475762px">BIBLE</tspan></text>
+    </g>
+    <g
+       id="g5634"
+       transform="translate(-1.4387608,-9.0397571)">
+      <rect
+         y="425.18631"
+         x="17.847361"
+         height="73.834114"
+         width="217.1828"
+         id="rect4603"
+         style="opacity:1;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:2.8786397;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         id="text4487"
+         y="483.04633"
+         x="127.30138"
+         style="font-style:normal;font-weight:normal;font-size:76.81085968px;line-height:48.00678253px;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.92027152px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'SBL BibLit';-inkscape-font-specification:'SBL BibLit';text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:1.92027152px"
+           y="483.04633"
+           x="127.30138"
+           id="tspan4485"
+           sodipodi:role="line">אמר</tspan></text>
+      <text
+         id="text4601"
+         y="442.4772"
+         x="25.845072"
+         style="font-style:normal;font-weight:normal;font-size:21.07558632px;line-height:13.17224121px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#d1d6e3;fill-opacity:1;stroke:none;stroke-width:0.52688968px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.9333334px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Bold';fill:#d1d6e3;fill-opacity:1;stroke-width:0.52688968px;"
+           y="442.4772"
+           x="25.845072"
+           id="tspan4599"
+           sodipodi:role="line">VERB</tspan></text>
+      <rect
+         style="opacity:1;fill:#767c92;fill-opacity:1;stroke:none;stroke-width:1.51929641;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5636"
+         width="217.1828"
+         height="20.566835"
+         x="17.847361"
+         y="500.54468" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:21.07558632px;line-height:13.17224121px;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.52688968px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="125.09711"
+         y="514.6651"
+         id="text4495"><tspan
+           sodipodi:role="line"
+           id="tspan4493"
+           x="125.09711"
+           y="514.6651"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.9333334px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Bold';text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:0.52688968px">Hiphil  ·  Wayyiqtol  ·  3ms</tspan></text>
     </g>
   </g>
 </svg>
