@@ -19,7 +19,7 @@ api = TF.load('''
 	g_prs_utf8 g_uvf_utf8
 	det book chapter verse sdbh lxxlexeme
 
-	trailer_utf8 g_word_utf8 lex
+	trailer_utf8 g_word_utf8 lex accents
 	prs_gn prs_nu prs_ps g_cons_utf8
 ''')
 api.makeAvailableIn(globals())
@@ -84,6 +84,7 @@ def word_data(node):
 		"prs_nu": F.prs_nu.v(node),
 		"prs_gn": F.prs_gn.v(node),
 		"prs_ps": F.prs_ps.v(node),
+		"accents": F.accents.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
 		"gloss": F.gloss.v(L.u(node, otype='lex')[0]),
 		"invert": "t",
@@ -125,6 +126,7 @@ functions = {
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
 	"g_cons_utf8": lambda node, value : F.g_cons_utf8.v(node) == value,
+	"accents": lambda node, value : F.accents.v(node) == value,
 	"is_definite": lambda node, value : F.det.v(L.u("phrase", node)) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
