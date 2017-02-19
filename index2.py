@@ -259,7 +259,7 @@ def api_search():
 	if len(query) == 0:
 		response.content_type = 'application/json'
 		return json.dumps([])
-	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase"]
+	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase", "sequence"]
 	search_range = json_response["search_range"]
 	if search_range not in search_ranges:
 		search_range = "clause"
@@ -268,15 +268,41 @@ def api_search():
 	word_group_with_match = [[] for i in range(len(query))]
 	found_words = []
 	for n in F.otype.s('word'):
-		for q_index, q in enumerate(query):
-			if test_node_with_query(n, q):
-				search_range_node = L.u(n, otype=search_range)[0]
-				word_group_with_match[q_index].append(search_range_node)
-				found_words.append({
-					"search_range_node": search_range_node,
-					"word_node": n
-				})
-				break
+		if search_range == "sequence":
+			ignorable_sp = ["prep", "conj", "art"]
+			q_index = 0
+			test_node = n
+			matching_nodes = []
+			search_range_node = L.u(n, otype='verse')[0]
+			test_result = test_node_with_query(test_node, query[q_index])
+			while test_result or \
+				(test_node != n and F.sp.v(test_node) in ignorable_sp):
+
+				# if the node actually passed the last query, add it and
+				# increment to next query - because this is a sequence thing
+				if test_result:
+					matching_nodes.append(test_node)
+					word_group_with_match[q_index].append(search_range_node)
+					found_words.append({
+						"search_range_node": search_range_node,
+						"word_node": test_node
+					})
+					q_index += 1
+					if len(query) == q_index:
+						break
+				test_node = L.n(test_node, otype='word')[0]
+				test_result = test_node_with_query(test_node, query[q_index])
+		else:
+			for q_index, q in enumerate(query):
+				if test_node_with_query(n, q):
+					search_range_node = L.u(n, otype=search_range)[0]
+					word_group_with_match[q_index].append(search_range_node)
+					found_words.append({
+						"search_range_node": search_range_node,
+						"word_node": n
+					})
+					break
+
 
 	words_groups_to_intersect = []
 	words_groups_to_filter = []
