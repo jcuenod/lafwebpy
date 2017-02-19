@@ -22,6 +22,7 @@ api = TF.load('''
 	trailer_utf8 g_word_utf8 lex accents
 	prs_gn prs_nu prs_ps g_cons_utf8
 ''')
+# typ
 api.makeAvailableIn(globals())
 
 
@@ -77,6 +78,7 @@ def word_data(node):
 		"vt": F.vt.v(node), # vt = verbal tense
 		"vs": F.vs.v(node), # vs = verbal stem
 		"st": F.st.v(node), # construct/absolute/emphatic
+		# "type": F.typ.v(L.u(node, otype='phrase')[0]),
 		"is_definite": F.det.v(L.u(node, otype='phrase_atom')[0]),
 		"g_prs_utf8": F.g_prs_utf8.v(node),
 		"g_uvf_utf8": F.g_uvf_utf8.v(node),
@@ -127,6 +129,7 @@ functions = {
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
 	"g_cons_utf8": lambda node, value : F.g_cons_utf8.v(node) == value,
 	"accents": lambda node, value : F.accents.v(node) == value,
+	# "type": lambda node, value : F.typ.v(L.u(node, otype='phrase')[0]) == value,
 	"is_definite": lambda node, value : F.det.v(L.u(node, otype='phrase_atom')[0]) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
@@ -192,20 +195,21 @@ def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 	found_word_group = L.d(node, otype='word')
 
 	# broad_node = T.nodeFromSection(T.sectionFromNode(node))
-	verse = L.u(node, otype='verse')
+	verse = node
+	if F.otype.v(node) == "verse":
+		verse = [node]
+	else:
+		verse = L.u(node, otype='verse')
+		if len(verse) == 0:
+			verse = []
+			for v in range(p["verse_lower"], p["verse_upper"] + 1):
+				verse.append(T.nodeFromSection((p["book"], p["chapter"], v)))
+
 	if len(verse) == 1:
 		words = L.d(verse[0], otype='word')
 	else:
-		for vs in L.d(node, otype='verse'):
-			words += L.d(vs, otype='word')
-
-
-	# for vs in L.u(node, otype='verse'):
-	# 	words += L.d(vs, otype='word')
-
-	# for vs in range(p["verse_lower"], p["verse_upper"] + 1):
-		# words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
-		# words += T.
+		for n in verse:
+			words += L.d(n, otype='word')
 
 	ret_array = []
 	for w in words:
