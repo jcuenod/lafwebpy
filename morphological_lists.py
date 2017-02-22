@@ -146,7 +146,7 @@ book_to_index = {
 	"Psalms": 19,
 	"Proverbs": 20,
 	"Ecclesiastes": 21,
-	"Song_of_Songs": 22,
+	"Song_of_songs": 22,
 	"Isaiah": 23,
 	"Jeremiah": 24,
 	"Lamentations": 25,
