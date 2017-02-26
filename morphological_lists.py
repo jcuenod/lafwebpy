@@ -209,7 +209,8 @@ abbreviated_book_names = {
 }
 
 def generous_name(book_name):
-	return generous_book_names[book_name] if book_name in generous_book_names else book_name
+	normalised_book_name = book_name.replace("+", " ")
+	return generous_book_names[normalised_book_name] if normalised_book_name in generous_book_names else book_name
 
 def book_index(book_name):
 	return int(book_to_index[generous_name(book_name)])
