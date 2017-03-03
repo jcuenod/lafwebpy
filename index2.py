@@ -6,6 +6,7 @@ from io import TextIOWrapper
 from morphological_lists import book_index, generous_name, book_abbreviation
 from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
 from lxml import etree
+from itertools import chain
 
 from tf.fabric import Fabric
 
@@ -261,15 +262,29 @@ def api_search():
 	if len(query) == 0:
 		response.content_type = 'application/json'
 		return json.dumps([])
+
 	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase"]
 	search_range = json_response["search_range"]
 	if search_range not in search_ranges:
 		search_range = "clause"
 
+	search_range_filtered = F.otype.s('word')
+	if "search_filter" in json_response:
+		temp_search_range_filtered = []
+		for sfilter in json_response["search_filter"]:
+			filter_node = T.nodeFromSection((generous_name(sfilter),))
+			if filter_node is not None:
+				temp_search_range_filtered = list(chain(temp_search_range_filtered, L.d(filter_node, otype='word')))
+			else:
+				print("Dropped a filter category: ", sfilter)
+		if len(temp_search_range_filtered) > 0:
+			search_range_filtered = temp_search_range_filtered
+
 	word_groups_to_exclude = []
 	word_group_with_match = [[] for i in range(len(query))]
 	found_words = []
-	for n in F.otype.s('word'):
+
+	for n in search_range_filtered:
 		for q_index, q in enumerate(query):
 			if test_node_with_query(n, q):
 				search_range_node = L.u(n, otype=search_range)[0]
