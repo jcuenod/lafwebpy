@@ -19,7 +19,7 @@ api = TF.load('''
 	g_prs_utf8 g_uvf_utf8
 	det book chapter verse sdbh lxxlexeme
 
-	trailer_utf8 g_word_utf8 lex accents
+	trailer_utf8 g_word_utf8 lex accent accent_quality
 	prs_gn prs_nu prs_ps g_cons_utf8
 ''')
 # typ
@@ -86,7 +86,8 @@ def word_data(node):
 		"prs_nu": F.prs_nu.v(node),
 		"prs_gn": F.prs_gn.v(node),
 		"prs_ps": F.prs_ps.v(node),
-		"accents": F.accents.v(node),
+		"accent": F.accent.v(node),
+		"accent_quality": F.accent_quality.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
 		"gloss": F.gloss.v(L.u(node, otype='lex')[0]),
 		"invert": "t",
@@ -128,7 +129,8 @@ functions = {
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
 	"g_cons_utf8": lambda node, value : F.g_cons_utf8.v(node) == value,
-	"accents": lambda node, value : F.accents.v(node) == value,
+	"accent": lambda node, value : F.accent.v(node) == value,
+	"accent_quality": lambda node, value : F.accent_quality.v(node) == value,
 	# "type": lambda node, value : F.typ.v(L.u(node, otype='phrase')[0]) == value,
 	"is_definite": lambda node, value : F.det.v(L.u(node, otype='phrase_atom')[0]) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
