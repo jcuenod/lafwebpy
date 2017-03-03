@@ -7,6 +7,8 @@ from morphological_lists import book_index, generous_name, book_abbreviation
 from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
 from lxml import etree
 
+from loadParallelText import getPTextFromRefArray
+
 from tf.fabric import Fabric
 
 TF = Fabric(locations='../text-fabric-data', modules='hebrew/etcbc4c')
@@ -294,9 +296,9 @@ def api_search():
 	print (str(len(intersection)) + " results")
 
 	# Truncate array if too long
-	if len(intersection) > 200:
-		intersection = intersection[:100]
-		print ("Abbreviating to just 100 elements")
+	if len(intersection) > 1000:
+		intersection = intersection[:500]
+		print ("Abbreviating to just 500 elements")
 
 	retval = []
 	for r in intersection:
@@ -304,7 +306,7 @@ def api_search():
 		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_range_node"] == r, found_words)))
 		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
 		# heb_verse_text = full_verse_search_text
-		p_text = get_parallel_text_from_node(r)
+		# p_text = get_parallel_text_from_node(r)
 
 		retval.append({
 			"passage": passage_abbreviation(r),
@@ -313,8 +315,13 @@ def api_search():
 			# "passage": passage_abbreviation(str(T.sectionFromNode(r))),
 			"clause": clause_text,
 			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
-			"english": p_text
+			"english": T.sectionFromNode(r)
 		})
+
+	# Grab parallel text
+	parallel_text = getPTextFromRefArray(list(map(lambda x: x["english"], retval)))
+	for i in range(len(retval)):
+		retval[i]["english"] = parallel_text[retval[i]["english"]]
 	# retval_sorted = sorted(retval, key=lambda x: key_from_passage(x["passage"]))
 	retval_sorted = sorted(retval, key=lambda r: sortKey(r["node"]))
 
