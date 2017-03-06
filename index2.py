@@ -1,4 +1,5 @@
 from sys import getsizeof
+import datetime
 from functools import reduce
 import sqlite3, sys, collections, re, json
 from collections import defaultdict
@@ -477,6 +478,15 @@ def root_page(book="Genesis", chapter="1"):
 @hook('after_request')
 def enable_cors():
 	response.headers['Access-Control-Allow-Origin'] = '*'
+
+@hook('before_request')
+def enable_cors():
+	client_ip = request.environ.get('REMOTE_ADDR')
+	client_path = request.path
+	client_payload = str(vars(request.POST))
+	with open('log/clients.log', mode='a', encoding='utf-8') as out:
+		out.write(client_ip + "\t" + str(datetime.datetime.now()) +  "\t" + client_path + "\t" + client_payload + "\n")
+
 
 port_to_host_on = 80
 if len(sys.argv) > 1:
