@@ -60,7 +60,7 @@ def remove_na_and_empty_and_unknown(list_to_reduce):
 	templist = list_to_reduce
 	keys_to_remove = set()
 	for key, value in templist.items():
-		if value == "NA" or value == "" or value == "unknown":
+		if value == "NA" or value == "" or value == "unknown" or value is None:
 			keys_to_remove.add(key)
 	for key in keys_to_remove:
 		del templist[key]
