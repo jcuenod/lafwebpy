@@ -5,11 +5,19 @@ import sqlite3, sys, collections, re, json
 from collections import defaultdict
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name, book_abbreviation
-from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
+from bottle import Bottle, hook, route, get, post, request, response, redirect, run, template, static_file
+import paste.gzipper
 from lxml import etree
 from itertools import chain
 
 from tf.fabric import Fabric
+
+### set up app - we're going to use it for gzip middleware ###
+
+app = Bottle()
+
+### load up TF ###
+
 
 TF = Fabric(locations='../text-fabric-data', modules='hebrew/etcbc4c')
 api = TF.load('''
@@ -40,8 +48,6 @@ verse_node_index = defaultdict(lambda : defaultdict(dict))
 
 db = sqlite3.connect("parallel_texts.sqlite", check_same_thread=False)
 query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
-
-
 
 
 
@@ -96,7 +102,7 @@ def word_data(node):
 	}
 	return remove_na_and_empty_and_unknown(r);
 
-@post('/api/word_data')
+@app.post('/api/word_data')
 def api_word_data():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -255,7 +261,7 @@ def passage_abbreviation(node):
 # 	ret = str(reference)
 # 	return ret
 
-@post('/api/search')
+@app.post('/api/search')
 def api_search():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -354,7 +360,7 @@ def appended_formatted_list(original_dict, node):
 		new_dict[abbreviated_book_name][p_tuple["chapter"]].append(verse_range)
 	return new_dict
 
-@post('/api/collocations')
+@app.post('/api/collocations')
 def api_collocations():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -402,7 +408,7 @@ def api_collocations():
 	response.content_type = 'application/json'
 	return json.dumps(word_tally_list_sorted)
 
-@post('/api/word_study')
+@app.post('/api/word_study')
 def api_word_study():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -438,7 +444,7 @@ def api_word_study():
 	response.content_type = 'application/json'
 	return json.dumps(r)
 
-@post('/api/book_chapter')
+@app.post('/api/book_chapter')
 def api_book_chapter():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -460,26 +466,28 @@ def api_book_chapter():
 
 ### BARE ESSENTIAL FUNCTIONS ###
 
-@get('/<filename:re:.*\.js>')
-@get('/<filename:re:.*\.css>')
-@get('/<filename:re:.*\.svg>')
-@get('/<filename:re:.*\.png>')
-@get('/<filename:re:.*\.map>')
-@route('/static/<filename>')
+@app.get('/<filename:re:.*\.js>')
+@app.get('/<filename:re:.*\.css>')
+@app.get('/<filename:re:.*\.svg>')
+@app.get('/<filename:re:.*\.png>')
+@app.get('/<filename:re:.*\.map>')
+@app.route('/static/<filename>')
 def static(filename):
+	response.headers['Cache-Control'] = 'public, max-age=0'
 	return static_file(filename, root='../react-lafwebpy-client/build')
 
-@get('/<book>')
-@get('/<book>/<chapter>')
-@route('/')
+@app.get('/<book>')
+@app.get('/<book>/<chapter>')
+@app.route('/')
 def root_page(book="Genesis", chapter="1"):
+	response.headers['Cache-Control'] = 'public, max-age=0'
 	return static_file("/index.html", root='../react-lafwebpy-client/build')
 
-@hook('after_request')
+@app.hook('after_request')
 def enable_cors():
 	response.headers['Access-Control-Allow-Origin'] = '*'
 
-@hook('before_request')
+@app.hook('before_request')
 def enable_cors():
 	client_ip = request.environ.get('REMOTE_ADDR')
 	client_path = request.path
@@ -492,4 +500,7 @@ port_to_host_on = 80
 if len(sys.argv) > 1:
 	if sys.argv[1].isdigit():
 		port_to_host_on = int(sys.argv[1])
-run(host='0.0.0.0', port=port_to_host_on, server='paste', debug=True)
+
+
+app = paste.gzipper.middleware(app)
+run(app, host='0.0.0.0', port=port_to_host_on, server='paste', debug=True)
