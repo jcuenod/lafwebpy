@@ -143,6 +143,7 @@ functions = {
 	"is_definite": lambda node, value : F.det.v(L.u(node, otype='phrase_atom')[0]) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
+	"rootregex": lambda node, value : re.match(value, F.lex_utf8.v(node)) != None, # note that this is not the other "root"
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
 	"gloss": lambda node, value : value in F.gloss.v(L.u(node, otype='lex')[0]),
 	"invert": lambda node, value : True
