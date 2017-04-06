@@ -462,17 +462,32 @@ def api_book_chapter():
 	book = generous_name(json_response["book"])
 	chapter = int(json_response["chapter"]) # This needs to be a string for the if...
 	book_chapter_node = T.nodeFromSection((book, chapter))
+
+	highlights = {}
+	if "highlights" in json_response:
+		highlights = json_response["highlights"]#list(filter(lambda x: len(list(x.keys())) > 0, ))
+
 	chapter_data = []
 	for v in L.d(book_chapter_node, otype='verse'):
 		verse = F.verse.v(v)
 		for w in L.d(v, otype='word'):
-			chapter_data.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
+			highlightMatches = [k for k, v in highlights.items() if test_node_with_query(w, v)]
+			chapter_data.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w), "highlights": highlightMatches })
 	response.content_type = 'application/json'
 	ret = {
 		"reference": { "book": book, "chapter": chapter },
 		"chapter_data": chapter_data
 	}
 	return json.dumps(ret)
+
+	# This is a good way of getting the range of word nodes given an arbitrary starting and ending verse
+	####
+	# startingReference = ("Isaiah", 52, 13)
+	# endingReference = ("Isaiah", 53, 12)
+	# firstNode = L.d(T.nodeFromSection(startingReference), otype="word")[0]
+	# lastNode = L.d(T.nodeFromSection(endingReference), otype="word")[-1]
+	# nodeRange = range(firstNode, lastNode+1)
+	# wordNodeRange = filter(lambda x: F.otype.v(x) == "word", nodeRange)
 
 
 ### BARE ESSENTIAL FUNCTIONS ###
