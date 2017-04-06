@@ -293,7 +293,12 @@ def api_search():
 	found_words = []
 
 	for n in search_range_filtered:
+		inverted_search_done = False
+		regular_search_done = False
 		for q_index, q in enumerate(query):
+			query_inverted = "invert" in q
+			if (inverted_search_done and query_inverted) or (regular_search_done and not query_inverted):
+				continue
 			if test_node_with_query(n, q):
 				search_range_node = L.u(n, otype=search_range)[0]
 				word_group_with_match[q_index].append(search_range_node)
@@ -301,7 +306,12 @@ def api_search():
 					"search_range_node": search_range_node,
 					"word_node": n
 				})
-				break
+				if query_inverted:
+					inverted_search_done = True
+				else:
+					regular_search_done = True
+				if regular_search_done and inverted_search_done:
+					break
 
 	words_groups_to_intersect = []
 	words_groups_to_filter = []
