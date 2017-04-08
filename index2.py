@@ -1,13 +1,25 @@
 from sys import getsizeof
+import datetime
 from functools import reduce
 import sqlite3, sys, collections, re, json
 from collections import defaultdict
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name, book_abbreviation
-from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
+from bottle import Bottle, hook, route, get, post, request, response, redirect, run, template, static_file
+import paste.gzipper
 from lxml import etree
+from itertools import chain
+
+from loadParallelText import getPTextFromRefPairArray
 
 from tf.fabric import Fabric
+
+### set up app - we're going to use it for gzip middleware ###
+
+app = Bottle()
+
+### load up TF ###
+
 
 TF = Fabric(locations='../text-fabric-data', modules='hebrew/etcbc4c')
 api = TF.load('''
@@ -19,7 +31,7 @@ api = TF.load('''
 	g_prs_utf8 g_uvf_utf8
 	det book chapter verse sdbh lxxlexeme
 
-	trailer_utf8 g_word_utf8 lex accents
+	trailer_utf8 g_word_utf8 lex accent accent_quality
 	prs_gn prs_nu prs_ps g_cons_utf8
 ''')
 # typ
@@ -41,8 +53,6 @@ query = "select text from p_text where book_number={bk} and heb_chapter={ch} and
 
 
 
-
-
 ### WORD API ###
 
 def remove_tags(text):
@@ -59,7 +69,7 @@ def remove_na_and_empty_and_unknown(list_to_reduce):
 	templist = list_to_reduce
 	keys_to_remove = set()
 	for key, value in templist.items():
-		if value == "NA" or value == "" or value == "unknown":
+		if value == "NA" or value == "" or value == "unknown" or value is None:
 			keys_to_remove.add(key)
 	for key in keys_to_remove:
 		del templist[key]
@@ -86,14 +96,15 @@ def word_data(node):
 		"prs_nu": F.prs_nu.v(node),
 		"prs_gn": F.prs_gn.v(node),
 		"prs_ps": F.prs_ps.v(node),
-		"accents": F.accents.v(node),
+		"accent": F.accent.v(node),
+		"accent_quality": F.accent_quality.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
 		"gloss": F.gloss.v(L.u(node, otype='lex')[0]),
 		"invert": "t",
 	}
 	return remove_na_and_empty_and_unknown(r);
 
-@post('/api/word_data')
+@app.post('/api/word_data')
 def api_word_data():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -128,11 +139,13 @@ functions = {
 	"g_prs_utf8": lambda node, value : F.g_prs_utf8.v(node) == value,
 	"g_uvf_utf8": lambda node, value : F.g_uvf_utf8.v(node) == value,
 	"g_cons_utf8": lambda node, value : F.g_cons_utf8.v(node) == value,
-	"accents": lambda node, value : F.accents.v(node) == value,
+	"accent": lambda node, value : F.accent.v(node) == value,
+	"accent_quality": lambda node, value : F.accent_quality.v(node) == value,
 	# "type": lambda node, value : F.typ.v(L.u(node, otype='phrase')[0]) == value,
 	"is_definite": lambda node, value : F.det.v(L.u(node, otype='phrase_atom')[0]) == value,
 	"has_suffix": lambda node, value : (F.g_prs_utf8.v(node) == "") is (value == "No"),
 	"tricons": lambda node, value : F.lex_utf8.v(node).replace('=','').replace('/','').replace('[','') == value,
+	"rootregex": lambda node, value : re.match(value, F.lex_utf8.v(node)) != None, # note that this is not the other "root"
 	"root": lambda node, value : F.g_lex_utf8.v(node) == value,
 	"gloss": lambda node, value : value in F.gloss.v(L.u(node, otype='lex')[0]),
 	"invert": lambda node, value : True
@@ -251,7 +264,23 @@ def passage_abbreviation(node):
 # 	ret = str(reference)
 # 	return ret
 
-@post('/api/search')
+def get_filtered_search_range(filterToUse):
+	search_range_filtered = F.otype.s('word')
+	if len(filterToUse) > 0:
+		temp_search_range_filtered = []
+		for sfilter in filterToUse:
+			filter_node = T.nodeFromSection((generous_name(sfilter),))
+			if filter_node is not None:
+				temp_search_range_filtered = list(chain(temp_search_range_filtered, L.d(filter_node, otype='word')))
+			else:
+				print("Dropped a filter category: ", sfilter)
+		if len(temp_search_range_filtered) > 0:
+			search_range_filtered = temp_search_range_filtered
+	return search_range_filtered
+
+
+
+@app.post('/api/search')
 def api_search():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -264,19 +293,41 @@ def api_search():
 	if search_range not in search_ranges:
 		search_range = "clause"
 
+	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
+
 	word_groups_to_exclude = []
 	word_group_with_match = [[] for i in range(len(query))]
 	found_words = []
-	for n in F.otype.s('word'):
+
+	for n in search_range_filtered:
 		if search_range == "sequence":
 			ignorable_sp = ["prep", "conj", "art"]
 			q_index = 0
 			test_node = n
 			matching_nodes = []
 			search_range_node = L.u(n, otype='verse')[0]
-			test_result = test_node_with_query(test_node, query[q_index])
 			while test_result or \
+			test_result = test_node_with_query(test_node, query[q_index])
 				(test_node != n and F.sp.v(test_node) in ignorable_sp):
+		inverted_search_done = False
+		regular_search_done = False
+			query_inverted = "invert" in q
+		for q_index, q in enumerate(query):
+			if (inverted_search_done and query_inverted) or (regular_search_done and not query_inverted):
+				continue
+			if test_node_with_query(n, q):
+				search_range_node = L.u(n, otype=search_range)[0]
+				word_group_with_match[q_index].append(search_range_node)
+				found_words.append({
+					"search_range_node": search_range_node,
+					"word_node": n
+				})
+				if query_inverted:
+				else:
+					inverted_search_done = True
+					regular_search_done = True
+				if regular_search_done and inverted_search_done:
+					break
 
 				# if the node actually passed the last query, add it and
 				# increment to next query - because this is a sequence thing
@@ -318,9 +369,9 @@ def api_search():
 	print (str(len(intersection)) + " results")
 
 	# Truncate array if too long
-	if len(intersection) > 200:
-		intersection = intersection[:100]
-		print ("Abbreviating to just 100 elements")
+	if len(intersection) > 1000:
+		intersection = intersection[:500]
+		print ("Abbreviating to just 500 elements")
 
 	retval = []
 	for r in intersection:
@@ -328,7 +379,7 @@ def api_search():
 		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_range_node"] == r, found_words)))
 		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
 		# heb_verse_text = full_verse_search_text
-		p_text = get_parallel_text_from_node(r)
+		# p_text = get_parallel_text_from_node(r)
 
 		retval.append({
 			"passage": passage_abbreviation(r),
@@ -337,8 +388,17 @@ def api_search():
 			# "passage": passage_abbreviation(str(T.sectionFromNode(r))),
 			"clause": clause_text,
 			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
-			"english": p_text
+			# "english": T.sectionFromNode(r)
 		})
+
+	# Grab parallel text
+	parallel_text = getPTextFromRefPairArray(list(map(lambda x: (T.sectionFromNode(x["node"]), T.sectionFromNode(x["node"], lastSlot=True)), retval)))
+	if len(parallel_text) != len(retval):
+		print("how can we have different values?!?")
+		exit(1)
+	for i in range(len(parallel_text)):
+		# retval[i]["english"] = parallel_text[retval[i]["english"]]
+		retval[i]["english"] = parallel_text[i]
 	# retval_sorted = sorted(retval, key=lambda x: key_from_passage(x["passage"]))
 	retval_sorted = sorted(retval, key=lambda r: sortKey(r["node"]))
 
@@ -362,7 +422,7 @@ def appended_formatted_list(original_dict, node):
 		new_dict[abbreviated_book_name][p_tuple["chapter"]].append(verse_range)
 	return new_dict
 
-@post('/api/collocations')
+@app.post('/api/collocations')
 def api_collocations():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
@@ -372,8 +432,10 @@ def api_collocations():
 		search_range = "clause"
 	search_query = json_response["query"]
 
+	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
+
 	word_group_with_match = [[] for i in range(len(search_query))]
-	for n in F.otype.s('word'):
+	for n in search_range_filtered:
 		for q_index, q in enumerate(search_query):
 			if test_node_with_query(n, q):
 				search_range_node = L.u(n, otype=search_range)[0]
@@ -410,15 +472,17 @@ def api_collocations():
 	response.content_type = 'application/json'
 	return json.dumps(word_tally_list_sorted)
 
-@post('/api/word_study')
+@app.post('/api/word_study')
 def api_word_study():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
 	query = json_response["query"]
 
+	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
+
 	column_list = []
 	results = []
-	for word in F.otype.s('word'):
+	for word in search_range_filtered:
 		if not reduce(lambda x, y: x and test_node_with_query(word, y), query, True):
 			continue
 		wd = word_data(word)
@@ -446,18 +510,24 @@ def api_word_study():
 	response.content_type = 'application/json'
 	return json.dumps(r)
 
-@post('/api/book_chapter')
+@app.post('/api/book_chapter')
 def api_book_chapter():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
 	book = generous_name(json_response["book"])
 	chapter = int(json_response["chapter"]) # This needs to be a string for the if...
 	book_chapter_node = T.nodeFromSection((book, chapter))
+
+	highlights = {}
+	if "highlights" in json_response:
+		highlights = json_response["highlights"]#list(filter(lambda x: len(list(x.keys())) > 0, ))
+
 	chapter_data = []
 	for v in L.d(book_chapter_node, otype='verse'):
 		verse = F.verse.v(v)
 		for w in L.d(v, otype='word'):
-			chapter_data.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w) })
+			highlightMatches = [k for k, v in highlights.items() if test_node_with_query(w, v)]
+			chapter_data.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w), "highlights": highlightMatches })
 	response.content_type = 'application/json'
 	ret = {
 		"reference": { "book": book, "chapter": chapter },
@@ -465,30 +535,53 @@ def api_book_chapter():
 	}
 	return json.dumps(ret)
 
+	# This is a good way of getting the range of word nodes given an arbitrary starting and ending verse
+	####
+	# startingReference = ("Isaiah", 52, 13)
+	# endingReference = ("Isaiah", 53, 12)
+	# firstNode = L.d(T.nodeFromSection(startingReference), otype="word")[0]
+	# lastNode = L.d(T.nodeFromSection(endingReference), otype="word")[-1]
+	# nodeRange = range(firstNode, lastNode+1)
+	# wordNodeRange = filter(lambda x: F.otype.v(x) == "word", nodeRange)
+
 
 ### BARE ESSENTIAL FUNCTIONS ###
 
-@get('/<filename:re:.*\.js>')
-@get('/<filename:re:.*\.css>')
-@get('/<filename:re:.*\.svg>')
-@get('/<filename:re:.*\.png>')
-@get('/<filename:re:.*\.map>')
-@route('/static/<filename>')
+@app.get('/<filename:re:.*\.js>')
+@app.get('/<filename:re:.*\.css>')
+@app.get('/<filename:re:.*\.svg>')
+@app.get('/<filename:re:.*\.png>')
+@app.get('/<filename:re:.*\.map>')
+@app.route('/static/<filename>')
 def static(filename):
+	response.headers['Cache-Control'] = 'public, max-age=0'
 	return static_file(filename, root='../react-lafwebpy-client/build')
 
-@get('/<book>')
-@get('/<book>/<chapter>')
-@route('/')
+@app.get('/<book>')
+@app.get('/<book>/<chapter>')
+@app.route('/')
 def root_page(book="Genesis", chapter="1"):
+	response.headers['Cache-Control'] = 'public, max-age=0'
 	return static_file("/index.html", root='../react-lafwebpy-client/build')
 
-@hook('after_request')
+@app.hook('after_request')
 def enable_cors():
 	response.headers['Access-Control-Allow-Origin'] = '*'
+
+@app.hook('before_request')
+def enable_cors():
+	client_ip = request.environ.get('REMOTE_ADDR')
+	client_path = request.path
+	client_payload = str(vars(request.POST))
+	with open('log/clients.log', mode='a', encoding='utf-8') as out:
+		out.write(client_ip + "\t" + str(datetime.datetime.now()) +  "\t" + client_path + "\t" + client_payload + "\n")
+
 
 port_to_host_on = 80
 if len(sys.argv) > 1:
 	if sys.argv[1].isdigit():
 		port_to_host_on = int(sys.argv[1])
-run(host='0.0.0.0', port=port_to_host_on, server='paste', debug=True)
+
+
+app = paste.gzipper.middleware(app)
+run(app, host='0.0.0.0', port=port_to_host_on, server='paste', debug=True)
