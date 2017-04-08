@@ -300,6 +300,9 @@ def api_search():
 	found_words = []
 
 	for n in search_range_filtered:
+		###
+		# This is the bit we're adding (DOES NOT WORK RIGHT NOW)
+		###
 		if search_range == "sequence":
 			ignorable_sp = ["prep", "conj", "art"]
 			q_index = 0
@@ -309,6 +312,7 @@ def api_search():
 			while test_result or \
 			test_result = test_node_with_query(test_node, query[q_index])
 				(test_node != n and F.sp.v(test_node) in ignorable_sp):
+		### This is the stuff we merged in from master...
 		inverted_search_done = False
 		regular_search_done = False
 			query_inverted = "invert" in q
