@@ -47,23 +47,11 @@ def refTupleToIndex(ref_tuple):
 	if ref_tuple[0] not in book_to_index:
 		print(ref_tuple)
 		raise IndexError("Didn't find book in index, that's bad...")
-	return book_to_index[ref_tuple[0]] * 100	 + int(ref_tuple[1]) * 1000 + int(ref_tuple[2])
+	return book_to_index[ref_tuple[0]] * 1000000 + int(ref_tuple[1]) * 1000 + int(ref_tuple[2])
 
 db = sqlite3.connect("parallel_texts.sqlite", check_same_thread=False)
-# query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
-# query = "select text from IndexedText where normalisedHebrewIndex={nhi}"
 
-# def getPTextFromRef(ref_tuple):
-# 	cursor = db.cursor()
-# 	new_query=query.format(nhi=refTupleToIndex(ref_tuple))
-# 	cursor.execute(new_query)
-# 	query_success = cursor.fetchone()
-# 	if query_success:
-# 		return query_success[0]
-# 	else:
-# 		return ""
-
-def getPTextFromRefArray(ref_pair_tuple_array):
+def getPTextFromRefPairArray(ref_pair_tuple_array):
 	range_array = []
 	where_clause = ""
 	for i, ref_pair_tuple in enumerate(ref_pair_tuple_array):
@@ -74,7 +62,6 @@ def getPTextFromRefArray(ref_pair_tuple_array):
 	where_clause = where_clause[:-4]
 
 	toret = [""] * len(ref_pair_tuple_array)
-	# index_list = list(map(lambda x: str(refTupleToIndex(x)), ref_tuple_array))
 	query_array = """
 		SELECT normalisedHebrewIndex, text FROM IndexedText
 			WHERE {wc}
@@ -82,8 +69,6 @@ def getPTextFromRefArray(ref_pair_tuple_array):
 	cursor = db.cursor()
 	cursor.execute(query_array)
 	for row in cursor:
-		# tuple_key = index_list.index(str(row[0]))
-		# toret[ref_tuple_array[tuple_key]] = row[1]
 		for index in filter(lambda x: x["start"] <= row[0] and x["end"] >= row[0], range_array):
 			toret[index["i"]] += row[1]
 

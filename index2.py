@@ -7,7 +7,7 @@ from morphological_lists import book_index, generous_name, book_abbreviation
 from bottle import hook, route, get, post, request, response, redirect, run, template, static_file
 from lxml import etree
 
-from loadParallelText import getPTextFromRefArray
+from loadParallelText import getPTextFromRefPairArray
 
 from tf.fabric import Fabric
 
@@ -319,7 +319,7 @@ def api_search():
 		})
 
 	# Grab parallel text
-	parallel_text = getPTextFromRefArray(list(map(lambda x: (T.sectionFromNode(x["node"]), T.sectionFromNode(x["node"], lastSlot=True)), retval)))
+	parallel_text = getPTextFromRefPairArray(list(map(lambda x: (T.sectionFromNode(x["node"]), T.sectionFromNode(x["node"], lastSlot=True)), retval)))
 	if len(parallel_text) != len(retval):
 		print("how can we have different values?!?")
 		exit(1)
