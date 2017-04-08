@@ -262,6 +262,22 @@ def passage_abbreviation(node):
 # 	ret = str(reference)
 # 	return ret
 
+def get_filtered_search_range(filterToUse):
+	search_range_filtered = F.otype.s('word')
+	if len(filterToUse) > 0:
+		temp_search_range_filtered = []
+		for sfilter in filterToUse:
+			filter_node = T.nodeFromSection((generous_name(sfilter),))
+			if filter_node is not None:
+				temp_search_range_filtered = list(chain(temp_search_range_filtered, L.d(filter_node, otype='word')))
+			else:
+				print("Dropped a filter category: ", sfilter)
+		if len(temp_search_range_filtered) > 0:
+			search_range_filtered = temp_search_range_filtered
+	return search_range_filtered
+
+
+
 @app.post('/api/search')
 def api_search():
 	json_response = json.load(TextIOWrapper(request.body))
@@ -276,17 +292,7 @@ def api_search():
 	if search_range not in search_ranges:
 		search_range = "clause"
 
-	search_range_filtered = F.otype.s('word')
-	if "search_filter" in json_response:
-		temp_search_range_filtered = []
-		for sfilter in json_response["search_filter"]:
-			filter_node = T.nodeFromSection((generous_name(sfilter),))
-			if filter_node is not None:
-				temp_search_range_filtered = list(chain(temp_search_range_filtered, L.d(filter_node, otype='word')))
-			else:
-				print("Dropped a filter category: ", sfilter)
-		if len(temp_search_range_filtered) > 0:
-			search_range_filtered = temp_search_range_filtered
+	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
 
 	word_groups_to_exclude = []
 	word_group_with_match = [[] for i in range(len(query))]
@@ -381,8 +387,10 @@ def api_collocations():
 		search_range = "clause"
 	search_query = json_response["query"]
 
+	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
+
 	word_group_with_match = [[] for i in range(len(search_query))]
-	for n in F.otype.s('word'):
+	for n in search_range_filtered:
 		for q_index, q in enumerate(search_query):
 			if test_node_with_query(n, q):
 				search_range_node = L.u(n, otype=search_range)[0]
@@ -425,9 +433,11 @@ def api_word_study():
 	print(json_response)
 	query = json_response["query"]
 
+	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
+
 	column_list = []
 	results = []
-	for word in F.otype.s('word'):
+	for word in search_range_filtered:
 		if not reduce(lambda x, y: x and test_node_with_query(word, y), query, True):
 			continue
 		wd = word_data(word)
