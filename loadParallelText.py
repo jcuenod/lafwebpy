@@ -23,7 +23,7 @@ book_to_index = {
 	"Psalms": 19,
 	"Proverbs": 20,
 	"Ecclesiastes": 21,
-	"Song_of_Songs": 22,
+	"Song_of_songs": 22,
 	"Isaiah": 23,
 	"Jeremiah": 24,
 	"Lamentations": 25,
@@ -43,33 +43,48 @@ book_to_index = {
 	"Malachi": 39,
 }
 
-def passageToIndex(passage):
-	if passage[0] not in book_to_index:
+def refTupleToIndex(ref_tuple):
+	if ref_tuple[0] not in book_to_index:
+		print(ref_tuple)
 		raise IndexError("Didn't find book in index, that's bad...")
-	return book_to_index[passage[0]] * 100000 + int(passage[1]) * 1000 + int(passage[2])
+	return book_to_index[ref_tuple[0]] * 100	 + int(ref_tuple[1]) * 1000 + int(ref_tuple[2])
 
 db = sqlite3.connect("parallel_texts.sqlite", check_same_thread=False)
 # query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
-query = "select text from IndexedText where normalisedHebrewIndex={nhi}"
+# query = "select text from IndexedText where normalisedHebrewIndex={nhi}"
 
-def getPTextFromRef(ref_tuple):
-	cursor = db.cursor()
-	new_query=query.format(nhi=passageToIndex(ref_tuple))
-	cursor.execute(new_query)
-	query_success = cursor.fetchone()
-	if query_success:
-		return query_success[0]
-	else:
-		return ""
+# def getPTextFromRef(ref_tuple):
+# 	cursor = db.cursor()
+# 	new_query=query.format(nhi=refTupleToIndex(ref_tuple))
+# 	cursor.execute(new_query)
+# 	query_success = cursor.fetchone()
+# 	if query_success:
+# 		return query_success[0]
+# 	else:
+# 		return ""
 
-def getPTextFromRefArray(ref_tuple_array):
-	toret = {}
-	index_list = list(map(lambda x: str(passageToIndex(x)), ref_tuple_array))
-	query_array = "select * from IndexedText where normalisedHebrewIndex in ({index_list})".format(index_list=",".join(index_list))
+def getPTextFromRefArray(ref_pair_tuple_array):
+	range_array = []
+	where_clause = ""
+	for i, ref_pair_tuple in enumerate(ref_pair_tuple_array):
+		start_index = refTupleToIndex(ref_pair_tuple[0])
+		end_index   = refTupleToIndex(ref_pair_tuple[1])
+		where_clause += """(normalisedHebrewIndex >= {start} AND normalisedHebrewIndex <= {end}) OR """.format(start=start_index, end=end_index)
+		range_array.append({"start": start_index, "end": end_index, "i": i})
+	where_clause = where_clause[:-4]
+
+	toret = [""] * len(ref_pair_tuple_array)
+	# index_list = list(map(lambda x: str(refTupleToIndex(x)), ref_tuple_array))
+	query_array = """
+		SELECT normalisedHebrewIndex, text FROM IndexedText
+			WHERE {wc}
+			ORDER BY normalisedHebrewIndex ASC""".format(wc=where_clause)
 	cursor = db.cursor()
 	cursor.execute(query_array)
 	for row in cursor:
-		tuple_key = index_list.index(str(row[0]))
-		toret[ref_tuple_array[tuple_key]] = row[1]
+		# tuple_key = index_list.index(str(row[0]))
+		# toret[ref_tuple_array[tuple_key]] = row[1]
+		for index in filter(lambda x: x["start"] <= row[0] and x["end"] >= row[0], range_array):
+			toret[index["i"]] += row[1]
 
 	return toret

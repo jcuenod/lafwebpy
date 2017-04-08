@@ -315,13 +315,17 @@ def api_search():
 			# "passage": passage_abbreviation(str(T.sectionFromNode(r))),
 			"clause": clause_text,
 			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
-			"english": T.sectionFromNode(r)
+			# "english": T.sectionFromNode(r)
 		})
 
 	# Grab parallel text
-	parallel_text = getPTextFromRefArray(list(map(lambda x: x["english"], retval)))
-	for i in range(len(retval)):
-		retval[i]["english"] = parallel_text[retval[i]["english"]]
+	parallel_text = getPTextFromRefArray(list(map(lambda x: (T.sectionFromNode(x["node"]), T.sectionFromNode(x["node"], lastSlot=True)), retval)))
+	if len(parallel_text) != len(retval):
+		print("how can we have different values?!?")
+		exit(1)
+	for i in range(len(parallel_text)):
+		# retval[i]["english"] = parallel_text[retval[i]["english"]]
+		retval[i]["english"] = parallel_text[i]
 	# retval_sorted = sorted(retval, key=lambda x: key_from_passage(x["passage"]))
 	retval_sorted = sorted(retval, key=lambda r: sortKey(r["node"]))
 
