@@ -52,6 +52,9 @@ def refTupleToIndex(ref_tuple):
 db = sqlite3.connect("parallel_texts.sqlite", check_same_thread=False)
 
 def getPTextFromRefPairArray(ref_pair_tuple_array):
+	if len(ref_pair_tuple_array) == 0:
+		return []
+
 	range_array = []
 	where_clause = ""
 	for i, ref_pair_tuple in enumerate(ref_pair_tuple_array):
