@@ -520,7 +520,7 @@ def api_book_chapter():
 @app.get('/<filename:re:.*\.map>')
 @app.route('/static/<filename>')
 def static(filename):
-	response.headers['Cache-Control'] = 'public, max-age=0'
+	response.headers['Cache-Control'] = 'public, max-age=86400'
 	return static_file(filename, root='../react-lafwebpy-client/build')
 
 @app.get('/<book>')
