@@ -537,7 +537,7 @@ def enable_cors():
 	response.headers['Access-Control-Allow-Origin'] = '*'
 
 @app.hook('before_request')
-def enable_cors():
+def log_the_request():
 	client_ip = request.environ.get('REMOTE_ADDR')
 	client_path = request.path
 	client_payload = str(vars(request.POST))
