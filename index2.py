@@ -520,7 +520,7 @@ def api_book_chapter():
 @app.get('/<filename:re:.*\.map>')
 @app.route('/static/<filename>')
 def static(filename):
-	response = bottle.static_file(filename, root='../react-lafwebpy-client/build')
+	response = Bottle.static_file(filename, root='../react-lafwebpy-client/build')
 	response.set_header('Cache-Control', 'public, max-age=0')
 	return response
 
@@ -528,7 +528,7 @@ def static(filename):
 @app.get('/<book>/<chapter>')
 @app.route('/')
 def root_page(book="Genesis", chapter="1"):
-	response = bottle.static_file("/index.html", root='../react-lafwebpy-client/build')
+	response = Bottle.static_file("/index.html", root='../react-lafwebpy-client/build')
 	response.set_header('Cache-Control', 'public, max-age=0')
 	return response
 
