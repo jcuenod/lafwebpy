@@ -520,15 +520,17 @@ def api_book_chapter():
 @app.get('/<filename:re:.*\.map>')
 @app.route('/static/<filename>')
 def static(filename):
-	response.headers['Cache-Control'] = 'public, max-age=86400'
-	return static_file(filename, root='../react-lafwebpy-client/build')
+	response = bottle.static_file(filename, root='../react-lafwebpy-client/build')
+	response.set_header('Cache-Control', 'public, max-age=0')
+	return response
 
 @app.get('/<book>')
 @app.get('/<book>/<chapter>')
 @app.route('/')
 def root_page(book="Genesis", chapter="1"):
-	response.headers['Cache-Control'] = 'public, max-age=0'
-	return static_file("/index.html", root='../react-lafwebpy-client/build')
+	response = bottle.static_file("/index.html", root='../react-lafwebpy-client/build')
+	response.set_header('Cache-Control', 'public, max-age=0')
+	return response
 
 @app.hook('after_request')
 def enable_cors():
