@@ -1,13 +1,10 @@
-from sys import getsizeof
 import datetime
 from functools import reduce
-import sqlite3, sys, collections, re, json
-from collections import defaultdict
+import sys, collections, re, json
 from io import TextIOWrapper
 from morphological_lists import book_index, generous_name, book_abbreviation
 from bottle import Bottle, hook, route, get, post, request, response, redirect, run, template, static_file
 import paste.gzipper
-from lxml import etree
 from itertools import chain
 
 from loadParallelText import getPTextFromRefPairArray
@@ -39,31 +36,7 @@ api.makeAvailableIn(globals())
 
 
 
-# PRECOMPUTE SOME USEFUL DATA
-verse_node_index = defaultdict(lambda : defaultdict(dict))
-# word_node_list = []
-
-# print (" -- precomputing node data --")
-# for n in F.otype.s('verse'):
-# 	verse_node_index[F.book.v(n)][int(F.chapter.v(n))][int(F.verse.v(n))] = n
-# print (" -- done precomputing --")
-
-db = sqlite3.connect("parallel_texts.sqlite", check_same_thread=False)
-query = "select text from p_text where book_number={bk} and heb_chapter={ch} and heb_verse={vs}"
-
-
-
 ### WORD API ###
-
-def remove_tags(text):
-	doc = etree.XML(text)
-	for br in doc.xpath("*//br"):
-		br.tail = " " + br.tail if br.tail else " "
-	for netNote in doc.xpath("*//br"):
-		netNote.tail = " " + netNote.tail if netNote.tail else " "
-	etree.strip_elements(doc, 'netNote', 'chapter', with_tail=False)
-	etree.strip_tags(doc, 'bodyText', 'br')
-	return etree.tostring(doc).decode("utf-8").replace("  ", " ")
 
 def remove_na_and_empty_and_unknown(list_to_reduce):
 	templist = list_to_reduce
@@ -117,11 +90,6 @@ def api_word_data():
 
 ### SEARCH API ###
 
-def key_from_passage(ptup):
-	bindex = book_index(ptup[0])
-	r = bindex * 1000000 + int(ptup[1]) * 1000 + int(ptup[2])
-	return r
-
 functions = {
 	"sp": lambda node, value : F.sp.v(node) == value,
 	"nu": lambda node, value : F.nu.v(node) == value,
@@ -169,38 +137,6 @@ def passage_tuple(node):
 		# "verse_upper": int(p_tuple.group(3) if p_tuple.group(5) is None else p_tuple.group(5))
 		"verse_upper": last_reference[2] if reference[2] != last_reference[2] else reference[2]
 	}
-
-def get_p_text(book, chapter, verse):
-	cursor = db.cursor()
-	new_query=query.format(bk=book_index(book),ch=chapter,vs=verse)
-	cursor.execute(new_query)
-	query_success = cursor.fetchone()
-	if query_success:
-		translated_verse = query_success[0]
-	else:
-		return ""
-	return remove_tags(translated_verse)
-
-# def get_words_from_verse_node_index(book_name, chapter, verse):
-# 	try:
-# 		return L.d('word', verse_node_index[book_name][chapter][verse])
-# 	except:
-# 		print(book_name, chapter, verse)
-# 		return []
-
-def get_parallel_text_from_node(node):
-	p_ret = ""
-	p = passage_tuple(node)
-	for verse in range(p["verse_lower"], p["verse_upper"] + 1):
-		p_ret += get_p_text(p["book"], p["chapter"], verse)
-	return p_ret
-
-# def get_words_nodes_of_verse_range_from_node(node):
-# 	words = []
-# 	p = passage_tuple(node)
-# 	for vs in range(p["verse_lower"], p["verse_upper"] + 1):
-# 		words += get_words_from_verse_node_index(generous_name(p["book"]), p["chapter"], vs)
-# 	return T.words(words, fmt='ha').replace('\n','')
 
 def get_highlighted_words_nodes_of_verse_range_from_node(node, found_words):
 	words = []
@@ -255,14 +191,6 @@ def passage_abbreviation(node):
 	last_node = T.sectionFromNode(node, lastSlot=True, lang='sbl')
 	suffix = "‑" + str(last_node[2]) if first_node[2] != last_node[2] else ""
 	return "{0} {1:d}:{2:d}".format(*first_node) + suffix
-
-# def passage_abbreviation(reference):
-# 	# p_tuple = re.search('(.*)\ (\d+):(\d+)(-(\d+))?', reference)
-# 	# ret = book_abbreviation(p_tuple.group(1)) + " " + p_tuple.group(2) + ":" + p_tuple.group(3)
-# 	# if p_tuple.group(5) is not None:
-# 	# 	ret += "-" + p_tuple.group(5)
-# 	ret = str(reference)
-# 	return ret
 
 def get_filtered_search_range(filterToUse):
 	search_range_filtered = F.otype.s('word')
@@ -341,20 +269,12 @@ def api_search():
 
 	retval = []
 	for r in intersection:
-		# full_verse_search_text = get_words_nodes_of_verse_range_from_node(r)
 		found_word_nodes = list(map(lambda x : x["word_node"], filter(lambda x : x["search_range_node"] == r, found_words)))
 		clause_text = get_highlighted_words_nodes_of_verse_range_from_node(r, found_word_nodes)
-		# heb_verse_text = full_verse_search_text
-		# p_text = get_parallel_text_from_node(r)
-
 		retval.append({
 			"passage": passage_abbreviation(r),
 			"node": r,
-
-			# "passage": passage_abbreviation(str(T.sectionFromNode(r))),
 			"clause": clause_text,
-			# "hebrew": heb_verse_text, # This is unnecessary - the clause prop has highlighted hebrew...
-			# "english": T.sectionFromNode(r)
 		})
 
 	# Grab parallel text
@@ -363,9 +283,7 @@ def api_search():
 		print("how can we have different values?!?")
 		exit(1)
 	for i in range(len(parallel_text)):
-		# retval[i]["english"] = parallel_text[retval[i]["english"]]
 		retval[i]["english"] = parallel_text[i]
-	# retval_sorted = sorted(retval, key=lambda x: key_from_passage(x["passage"]))
 	retval_sorted = sorted(retval, key=lambda r: sortKey(r["node"]))
 
 	response.content_type = 'application/json'
