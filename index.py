@@ -73,7 +73,6 @@ def word_data(node):
 		"accent_quality": F.accent_quality.v(node),
 		"has_suffix": "Yes" if F.g_prs_utf8.v(node) != "" else "No",
 		"gloss": F.gloss.v(L.u(node, otype='lex')[0]),
-		"invert": "t",
 	}
 	return remove_na_and_empty_and_unknown(r);
 
