@@ -313,7 +313,7 @@ def api_collocations():
 	search_ranges = ["clause", "sentence", "paragraph", "verse", "phrase"]
 	if search_range not in search_ranges:
 		search_range = "clause"
-	search_query = json_response["query"]
+	search_query = list(filter(lambda x: len(list(x.keys())) > 0, json_response["query"]))
 
 	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
 
@@ -359,7 +359,7 @@ def api_collocations():
 def api_word_study():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
-	query = json_response["query"]
+	query = list(filter(lambda x: len(list(x.keys())) > 0, json_response["query"]))
 
 	search_range_filtered = get_filtered_search_range(json_response["search_filter"] if "search_filter" in json_response else [])
 
