@@ -262,9 +262,12 @@ def api_search():
 	print (str(len(intersection)) + " results")
 
 	# Truncate array if too long
+	truncated = False
 	if len(intersection) > 1000:
 		intersection = intersection[:500]
 		print ("Abbreviating to just 500 elements")
+		truncated = True
+
 
 	retval = []
 	for r in intersection:
@@ -287,7 +290,7 @@ def api_search():
 
 	response.content_type = 'application/json'
 	return json.dumps({
-		"truncated": False,
+		"truncated": truncated,
 		"search_results": retval_sorted
 	})
 
