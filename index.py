@@ -286,7 +286,10 @@ def api_search():
 	retval_sorted = sorted(retval, key=lambda r: sortKey(r["node"]))
 
 	response.content_type = 'application/json'
-	return json.dumps(retval_sorted)
+	return json.dumps({
+		"truncated": False,
+		"search_results": retval_sorted
+	})
 
 
 def appended_formatted_list(original_dict, node):
@@ -353,7 +356,10 @@ def api_collocations():
 	word_tally_list_sorted = sorted(word_tally_list, key=lambda w: -w["count"])
 
 	response.content_type = 'application/json'
-	return json.dumps(word_tally_list_sorted)
+	return json.dumps({
+		"truncated": False,
+		"search_results": word_tally_list_sorted
+	})
 
 @app.post('/api/word_study')
 def api_word_study():
@@ -383,15 +389,14 @@ def api_word_study():
 				"accessor": k,
 			})
 
-	r = {
+	response.content_type = 'application/json'
+	return json.dumps({
 		"truncated": False,
 		"search_results": {
 			"columns": column_list,
 			"rows": results
 		}
-	}
-	response.content_type = 'application/json'
-	return json.dumps(r)
+	})
 
 @app.post('/api/book_chapter')
 def api_book_chapter():
