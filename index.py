@@ -20,18 +20,18 @@ app = Bottle()
 
 TF = Fabric(locations='../text-fabric-data', modules='hebrew/etcbc4c')
 api = TF.load('''
+	book chapter verse
 	sp nu gn ps vt vs st
 	otype
-	 lex_utf8
-	language gloss
-	chapter verse
+	det
+	g_word_utf8 trailer_utf8
+	lex_utf8 lex
 	g_prs_utf8 g_uvf_utf8
-	det book chapter verse sdbh lxxlexeme
-
-	trailer_utf8 g_word_utf8 lex accent accent_quality
 	prs_gn prs_nu prs_ps g_cons_utf8
+	gloss sdbh lxxlexeme
+	accent accent_quality
+	tab typ
 ''')
-# typ
 api.makeAvailableIn(globals())
 
 
