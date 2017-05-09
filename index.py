@@ -405,23 +405,80 @@ def api_word_study():
 def api_book_chapter():
 	json_response = json.load(TextIOWrapper(request.body))
 	print(json_response)
-	book = generous_name(json_response["book"])
-	chapter = int(json_response["chapter"]) # This needs to be a string for the if...
+	reference = json_response["reference"]
+	book = generous_name(reference["book"])
+	chapter = int(reference["chapter"]) # This needs to be a string for the if...
 	book_chapter_node = T.nodeFromSection((book, chapter))
+
+	if "display_by" not in json_response:
+		json_response["display_by"] = "verse"
+	display_setting_options = ["verse", "clause"]
+	display_setting = json_response["display_by"] if json_response["display_by"] in display_setting_options else "verse"
 
 	highlights = {}
 	if "highlights" in json_response:
-		highlights = json_response["highlights"]#list(filter(lambda x: len(list(x.keys())) > 0, ))
+		highlights = json_response["highlights"]
 
 	chapter_data = []
-	for v in L.d(book_chapter_node, otype='verse'):
-		verse = F.verse.v(v)
-		for w in L.d(v, otype='word'):
-			highlightMatches = [k for k, v in highlights.items() if test_node_with_query(w, v)]
-			chapter_data.append({ "verse": verse, "wid": w, "bit": F.g_word_utf8.v(w), "trailer": F.trailer_utf8.v(w), "highlights": highlightMatches })
+	if display_setting == "clause":
+		for c in L.d(book_chapter_node, otype='clause_atom'):
+			clause_atom_words = []
+			accent_unit_chunk = []
+			previous_trailer = " "
+			for w in L.d(c, otype='word'):
+				highlightMatches = [k for k, c in highlights.items() if test_node_with_query(w, c)]
+				if previous_trailer not in {'', '־'}:
+					if len(accent_unit_chunk) > 0:
+						clause_atom_words.append(accent_unit_chunk)
+						accent_unit_chunk = []
+				accent_unit_chunk.append({
+					"wid": w,
+					"bit": F.g_word_utf8.v(w),
+					"trailer": F.trailer_utf8.v(w),
+					"highlights": highlightMatches,
+				})
+				previous_trailer = F.trailer_utf8.v(w)
+			if len(accent_unit_chunk) > 0:
+				clause_atom_words.append(accent_unit_chunk)
+
+			chapter_data.append({
+				"verse": T.sectionFromNode(c)[2],
+				"tab": F.tab.v(c),
+				"type": F.typ.v(c),
+				"clause_words": clause_atom_words,
+			})
+
+	elif display_setting == "verse":
+		for v in L.d(book_chapter_node, otype='verse'):
+			verse_words = []
+			accent_unit_chunk = []
+			previous_trailer = " "
+			for w in L.d(v, otype='word'):
+				highlightMatches = [k for k, v in highlights.items() if test_node_with_query(w, v)]
+				if previous_trailer not in {'', '־'}:
+					if len(accent_unit_chunk) > 0:
+						verse_words.append(accent_unit_chunk)
+					accent_unit_chunk = []
+				accent_unit_chunk.append({
+					"wid": w,
+					"bit": F.g_word_utf8.v(w),
+					"trailer": F.trailer_utf8.v(w),
+					"highlights": highlightMatches,
+				})
+				previous_trailer = F.trailer_utf8.v(w)
+			if len(accent_unit_chunk) > 0:
+				verse_words.append(accent_unit_chunk)
+
+			chapter_data.append({
+				"verse": F.verse.v(v),
+				"verse_words": verse_words
+			})
+
+
 	response.content_type = 'application/json'
 	ret = {
 		"reference": { "book": book, "chapter": chapter },
+		"display_by": display_setting,
 		"chapter_data": chapter_data
 	}
 	return json.dumps(ret)
