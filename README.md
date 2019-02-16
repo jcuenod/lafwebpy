@@ -1,4 +1,9 @@
-# Lafwebpy - Query the Hebrew OT
+# Not Maintained
+
+Note, this project has been succeeded by [parabible](https://parabible.com). Code for the client available at https://github.com/parabible/parabible-server
+
+
+## Lafwebpy - Query the Hebrew OT
 
 Lafwebpy is a python server (using `bottle`) that exposes ETCBC Hebrew data (using [`text-fabric`](https://github.com/ETCBC/text-fabric/wiki)) and provides api access to it to return (1) parsing data on words as well as (2) search results and (3) collocations based on search terms.
 
